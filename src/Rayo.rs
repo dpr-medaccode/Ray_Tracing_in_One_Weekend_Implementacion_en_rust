@@ -9,7 +9,10 @@ pub struct Rayo {
 impl Rayo {
     //#[inline]
     pub fn new(origin: Point3, direction: Vec3) -> Self {
-        Self { origen: origin, direccion: direction }
+        Self {
+            origen: origin,
+            direccion: direction,
+        }
     }
 
     //#[inline]

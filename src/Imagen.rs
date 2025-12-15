@@ -58,5 +58,4 @@ impl Imagen {
     pub fn encabezado_imagen(&self) -> String {
         format!("P3\n{} {}\n255\n", self.ancho, self.alto)
     }
-    
 }

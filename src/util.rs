@@ -12,7 +12,7 @@ pub fn random_entre(minimo: f64, maximo: f64) -> f64 {
     minimo + (maximo - minimo) * rng.random::<f64>()
 }
 
- pub fn random_entre_intervalo(intervalo: Intervalo) -> f64 {
+pub fn random_entre_intervalo(intervalo: Intervalo) -> f64 {
     let mut rng = rand::rng();
     intervalo.minimo + (intervalo.maximo - intervalo.minimo) * rng.random::<f64>()
 }

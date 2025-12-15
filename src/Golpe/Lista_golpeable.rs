@@ -6,11 +6,11 @@ use crate::{
     Rayo::Rayo,
 };
 
-pub struct Lista_golpeable {
+pub struct ListaGolpeable {
     objetos: Vec<Arc<dyn Golpeable>>,
 }
 
-impl Lista_golpeable {
+impl ListaGolpeable {
     pub fn new() -> Self {
         Self {
             objetos: Vec::new(),
@@ -30,7 +30,7 @@ impl Lista_golpeable {
     }
 }
 
-impl Golpeable for Lista_golpeable {
+impl Golpeable for ListaGolpeable {
     fn rayo_golpea(&self, rayo: &Rayo, intervalo: &Intervalo) -> Option<Golpe> {
         let mut golpe_cercano: Option<Golpe> = None;
 

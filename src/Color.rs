@@ -48,9 +48,7 @@ fn to_byte(v: f64) -> u8 {
 }
 
 pub fn color_rayo(rayo: &Rayo, mundo: &dyn Golpeable, profundidad: i32) -> Color {
-
     if let Some(golpe) = mundo.rayo_golpea(rayo, &Intervalo::new(0.001, f64::INFINITY)) {
-        
         if profundidad <= 0 {
             return NEGRO;
         }
@@ -64,5 +62,37 @@ pub fn color_rayo(rayo: &Rayo, mundo: &dyn Golpeable, profundidad: i32) -> Color
 
     let unidad = Vec3::normalizar(&rayo.direccion());
     let t = 0.5 * (unidad.y() + 1.0);
-    BLANCO * (1.0 - t) + CIELO * t
+    BLANCO * (1.0 - t) + ATARDECER * t
+}
+
+pub fn mezclar_colores(color_1: &Color, color_2: &Color) -> Color {
+    Color::new(
+        color_1.x() / 2.0 + color_2.x() / 2.0,
+        color_1.y() / 2.0 + color_2.y() / 2.0,
+        color_1.z() / 2.0 + color_2.z() / 2.0,
+    )
+}
+
+pub fn oscurecer_color(color: &Color) -> Color {
+    Color::new(color.x() / 2.0, color.y() / 2.0, color.z() / 2.0)
+}
+
+pub fn aclasrar_color(color: &Color) -> Color {
+    Color::new(color.x() * 2.0, color.y() * 2.0, color.z() * 2.0)
+}
+
+fn to_linear(c: f64) -> f64 {
+    c.powf(2.2)
+}
+
+fn to_srgb(c: f64) -> f64 {
+    c.powf(1.0 / 2.2)
+}
+
+pub fn atenuar_color(color: &Color) -> Color {
+    Color::new(
+        to_srgb(to_linear(color.x()) * 0.5),
+        to_srgb(to_linear(color.y()) * 0.5),
+        to_srgb(to_linear(color.z()) * 0.5),
+    )
 }

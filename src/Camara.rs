@@ -2,19 +2,19 @@ use std::{sync::Arc, time::Instant};
 
 use crate::{
     Color::{color_rayo, escribir_color},
-    Golpe::Lista_golpeable::Lista_golpeable,
+    Golpe::Lista_golpeable::ListaGolpeable,
     Imagen::Imagen,
     Rayo::Rayo,
     Vec3::Vec3,
 };
 
-const PROFUNDIDAD: i32 = 50; // cantidad de rayos
-const MUESTRA_POR_PIXEL: i32 = 500; // anti-aliasing
+const PROFUNDIDAD: i32 = 10; // cantidad de rayos
+const MUESTRA_POR_PIXEL: i32 = 100; // anti-aliasing
 const ESCALA_PIXEL_MUESTRA: f64 = 1.0 / MUESTRA_POR_PIXEL as f64;
 
 pub struct Camara {
     imagen: Arc<Imagen>,
-    mundo: Lista_golpeable,
+    mundo: ListaGolpeable,
 
     origen: Vec3,
 
@@ -34,7 +34,7 @@ pub struct Camara {
 impl Camara {
     pub fn new(
         imagen: Arc<Imagen>,
-        mundo: Lista_golpeable,
+        mundo: ListaGolpeable,
         fov_vertical: f64,
         de_donde_mira: Vec3,
         hacia_donde_mira: Vec3,
@@ -122,10 +122,6 @@ impl Camara {
     }
 
     pub fn render(&self, mostrar_lineas: bool, medir_tiempo: bool) {
-        if medir_tiempo {
-            eprintln!("Render iniciado...");
-        }
-
         let inicio = Instant::now();
 
         print!("{}", self.imagen.encabezado_imagen());
@@ -134,7 +130,6 @@ impl Camara {
         let ancho = self.imagen.ancho();
 
         for j in 0..alto {
-            
             if mostrar_lineas {
                 eprintln!("Líneas restantes: {}", alto - j);
             }
