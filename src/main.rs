@@ -71,7 +71,7 @@ fn main() {
         material1,
     )));
 
-    let material2: Arc<dyn Material::Material> = Arc::new(DifusoLambertiano::new(INDIGO));
+    let material2: Arc<dyn Material::Material> = Arc::new(DifusoLambertiano::new(Vec3::Vec3::new(0.4, 0.2, 0.1)));
     mundo.push(Arc::new(Esfera::Esfera::new(
         Vec3::Vec3::new(-4.0, 1.0, 0.0),
         1.0,
@@ -79,7 +79,7 @@ fn main() {
     )));
 
     let material3: Arc<dyn Material::Material> = Arc::new(Metal::new(
-        atenuar_color(&mezclar_colores(&VERDE, &NARANJA)),
+        Vec3::Vec3::new(0.7, 0.6, 0.5),
         0.5,
     ));
     mundo.push(Arc::new(Esfera::Esfera::new(
@@ -93,7 +93,7 @@ fn main() {
     let hacia_donde_mira = Vec3::Vec3::new(0.0, 0.0, 0.0);
     let hacia_arriba = Vec3::Vec3::new(0.0, 1.0, 0.0);
 
-    let imagen = Arc::new(Imagen::Imagen::new(16.0 / 9.0, 400));
+    let imagen = Arc::new(Imagen::Imagen::new(16.0 / 9.0, 1200));
 
     let camara = Camara::Camara::new(
         imagen,

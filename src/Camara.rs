@@ -1,4 +1,11 @@
-use std::{io::Write, sync::Arc, time::Instant};
+use std::{
+    fs::File,
+    io::{BufWriter, Read, Write},
+    sync::Arc,
+    time::Instant,
+};
+
+use rayon::{current_num_threads, iter::{IntoParallelIterator, ParallelIterator}};
 
 use crate::{
     Color::{color_rayo, escribir_color},
@@ -8,8 +15,8 @@ use crate::{
     Vec3::Vec3,
 };
 
-const PROFUNDIDAD: i32 = 10; // cantidad de rayos
-const MUESTRA_POR_PIXEL: i32 = 100; // anti-aliasing
+const PROFUNDIDAD: i32 = 50; // cantidad de rayos
+const MUESTRA_POR_PIXEL: i32 = 500; // anti-aliasing
 const ESCALA_PIXEL_MUESTRA: f64 = 1.0 / MUESTRA_POR_PIXEL as f64;
 
 pub struct Camara {
@@ -121,39 +128,74 @@ impl Camara {
         self.origen + self.disco_desenfoque_u * punto.x() + self.disco_desenfoque_v * punto.y()
     }
 
-     pub fn render<W: Write>(&self, writer: &mut W, mostrar_lineas: bool, medir_tiempo: bool) {
-  
-        let inicio = Instant::now();
-
-        // Escribir encabezado de imagen
-        writer.write_all(self.imagen.encabezado_imagen().as_bytes()).unwrap();
+    pub fn render<W: Write>(&self, writer: &mut W, mostrar_lineas: bool, medir_tiempo: bool) {
+        const NUMERO_DE_HILOS: u32 = 8;
 
         let alto = self.imagen.alto();
         let ancho = self.imagen.ancho();
+        let inicio_total = Instant::now();
+        let tamanno_chunk = alto / NUMERO_DE_HILOS;
 
-        for j in 0..alto {
-            if mostrar_lineas {
-                eprintln!("Líneas restantes: {}", alto - j);
-            }
+        writer
+            .write_all(self.imagen.encabezado_imagen().as_bytes())
+            .unwrap();
 
-            for i in 0..ancho {
-                let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
+        (0..NUMERO_DE_HILOS).into_par_iter().for_each(|id_bloque| {
+            let inicio = id_bloque * tamanno_chunk;
+            
+            let fin = if id_bloque == NUMERO_DE_HILOS - 1 {
+                alto
+            } else {
+                (id_bloque + 1) * tamanno_chunk
+            };
 
-                for _ in 0..MUESTRA_POR_PIXEL {
-                    let rayo = self.rayo_por_pixel(i, j);
-                    pixel_color = pixel_color + color_rayo(&rayo, &self.mundo, PROFUNDIDAD);
+            let nombre_archivo = format!("bloque_{}.temp", id_bloque);
+            let archivo = File::create(&nombre_archivo).unwrap();
+            let mut writer_bloque = BufWriter::new(archivo);
+
+            for j in inicio..fin {
+                if mostrar_lineas {
+                    eprintln!("Bloque {} - Líneas restantes: {}", id_bloque, fin - j);
                 }
 
-                pixel_color = pixel_color * ESCALA_PIXEL_MUESTRA;
+                for i in 0..ancho {
+                    let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
 
-                writer
-                    .write_all(escribir_color(&pixel_color).as_bytes())
-                    .unwrap();
+                    for _ in 0..MUESTRA_POR_PIXEL {
+                        let rayo = self.rayo_por_pixel(i, j);
+                        pixel_color = pixel_color + color_rayo(&rayo, &self.mundo, PROFUNDIDAD);
+                    }
+
+                    pixel_color = pixel_color * ESCALA_PIXEL_MUESTRA;
+                    writer_bloque
+                        .write_all(escribir_color(&pixel_color).as_bytes())
+                        .unwrap();
+                }
             }
+
+            if mostrar_lineas {
+                eprintln!("Bloque {} terminado", id_bloque);
+            }
+        });
+
+        for id_bloque in 0..NUMERO_DE_HILOS {
+
+            let nombre_archivo = format!("bloque_{}.temp", id_bloque);
+
+            let mut archivo_bloque = File::open(&nombre_archivo).unwrap();
+
+            let mut buffer = Vec::new();
+
+            archivo_bloque.read_to_end(&mut buffer).unwrap();
+
+            writer.write_all(&buffer).unwrap();
+
+            // Opcional: eliminar archivo temporal
+            std::fs::remove_file(&nombre_archivo).unwrap();
         }
 
         if medir_tiempo {
-            let duracion = inicio.elapsed();
+            let duracion = inicio_total.elapsed();
             eprintln!("Render finalizado en {:.2?}", duracion);
         }
     }
