@@ -1,4 +1,4 @@
-use std::{sync::Arc, time::Instant};
+use std::{io::Write, sync::Arc, time::Instant};
 
 use crate::{
     Color::{color_rayo, escribir_color},
@@ -121,10 +121,12 @@ impl Camara {
         self.origen + self.disco_desenfoque_u * punto.x() + self.disco_desenfoque_v * punto.y()
     }
 
-    pub fn render(&self, mostrar_lineas: bool, medir_tiempo: bool) {
+     pub fn render<W: Write>(&self, writer: &mut W, mostrar_lineas: bool, medir_tiempo: bool) {
+  
         let inicio = Instant::now();
 
-        print!("{}", self.imagen.encabezado_imagen());
+        // Escribir encabezado de imagen
+        writer.write_all(self.imagen.encabezado_imagen().as_bytes()).unwrap();
 
         let alto = self.imagen.alto();
         let ancho = self.imagen.ancho();
@@ -144,8 +146,9 @@ impl Camara {
 
                 pixel_color = pixel_color * ESCALA_PIXEL_MUESTRA;
 
-                // Imprimir color del pixel
-                print!("{}", escribir_color(&pixel_color));
+                writer
+                    .write_all(escribir_color(&pixel_color).as_bytes())
+                    .unwrap();
             }
         }
 

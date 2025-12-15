@@ -9,10 +9,10 @@ mod Rayo;
 mod Vec3;
 mod util;
 
-use std::sync::Arc;
+use std::{fs::File, io::BufWriter, sync::Arc};
 
 use crate::{
-    Color::{AZUL, NARANJA, ROJO, VERDE, atenuar_color, mezclar_colores},
+    Color::{INDIGO, NARANJA, ROJO, VERDE, atenuar_color, mezclar_colores},
     Golpe::Lista_golpeable::ListaGolpeable,
     Material::{Dielectrico::Dielectrico, Difuso_lambertiano::DifusoLambertiano, Metal::Metal},
 };
@@ -71,7 +71,7 @@ fn main() {
         material1,
     )));
 
-    let material2: Arc<dyn Material::Material> = Arc::new(DifusoLambertiano::new(ROJO));
+    let material2: Arc<dyn Material::Material> = Arc::new(DifusoLambertiano::new(INDIGO));
     mundo.push(Arc::new(Esfera::Esfera::new(
         Vec3::Vec3::new(-4.0, 1.0, 0.0),
         1.0,
@@ -106,5 +106,9 @@ fn main() {
         10.0,
     );
 
-    camara.render(true, true);
+    let f = File::create("out/imagen.ppm").unwrap();
+    let mut writer = BufWriter::new(f);
+
+    camara.render(&mut writer, true, true);
+    
 }
