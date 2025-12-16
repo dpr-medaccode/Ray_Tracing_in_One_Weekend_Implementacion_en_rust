@@ -16,11 +16,9 @@ impl Metal {
 }
 
 impl Material for Metal {
-   
     fn dispersion(&self, rayo_entrante: &Rayo, golpe: &Golpe) -> Option<(Rayo, Color)> {
-
         let reflejado = Vec3::reflejar(&rayo_entrante.direccion(), &golpe.normal());
-        
+
         let reflejado = reflejado + self.borroso * Vec3::normalizado_random();
 
         let rayo_salida = Rayo::new(golpe.lugar(), reflejado);

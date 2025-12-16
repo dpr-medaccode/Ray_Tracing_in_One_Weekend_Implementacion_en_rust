@@ -5,7 +5,7 @@ use std::{
     time::Instant,
 };
 
-use rayon::{current_num_threads, iter::{IntoParallelIterator, ParallelIterator}};
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::{
     Color::{color_rayo, escribir_color},
@@ -15,9 +15,12 @@ use crate::{
     Vec3::Vec3,
 };
 
-const PROFUNDIDAD: i32 = 50; // cantidad de rayos
-const MUESTRA_POR_PIXEL: i32 = 500; // anti-aliasing
+const PROFUNDIDAD: i32 = 10;
+
+const MUESTRA_POR_PIXEL: i32 = 100; // anti-aliasing
 const ESCALA_PIXEL_MUESTRA: f64 = 1.0 / MUESTRA_POR_PIXEL as f64;
+
+const NUMERO_DE_HILOS: u32 = 8;
 
 pub struct Camara {
     imagen: Arc<Imagen>,
@@ -30,8 +33,7 @@ pub struct Camara {
 
     pixel_00_lugar: Vec3,
 
-    fov_vertical: f64,
-
+    //fov_vertical: f64,
     disco_desenfoque_u: Vec3,
     disco_desenfoque_v: Vec3,
 
@@ -90,7 +92,7 @@ impl Camara {
             delta_pixel_x,
             delta_pixel_y,
             pixel_00_lugar,
-            fov_vertical,
+            //fov_vertical,
             disco_desenfoque_u,
             disco_desenfoque_v,
             angulo_desenfoque,
@@ -129,8 +131,6 @@ impl Camara {
     }
 
     pub fn render<W: Write>(&self, writer: &mut W, mostrar_lineas: bool, medir_tiempo: bool) {
-        const NUMERO_DE_HILOS: u32 = 8;
-
         let alto = self.imagen.alto();
         let ancho = self.imagen.ancho();
         let inicio_total = Instant::now();
@@ -142,7 +142,7 @@ impl Camara {
 
         (0..NUMERO_DE_HILOS).into_par_iter().for_each(|id_bloque| {
             let inicio = id_bloque * tamanno_chunk;
-            
+
             let fin = if id_bloque == NUMERO_DE_HILOS - 1 {
                 alto
             } else {
@@ -179,7 +179,6 @@ impl Camara {
         });
 
         for id_bloque in 0..NUMERO_DE_HILOS {
-
             let nombre_archivo = format!("bloque_{}.temp", id_bloque);
 
             let mut archivo_bloque = File::open(&nombre_archivo).unwrap();

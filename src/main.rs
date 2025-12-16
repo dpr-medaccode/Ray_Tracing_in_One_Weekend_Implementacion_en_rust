@@ -93,7 +93,7 @@ fn main() {
     let hacia_donde_mira = Vec3::Vec3::new(0.0, 0.0, 0.0);
     let hacia_arriba = Vec3::Vec3::new(0.0, 1.0, 0.0);
 
-    let imagen = Arc::new(Imagen::Imagen::new(16.0 / 9.0, 1200));
+    let imagen = Arc::new(Imagen::Imagen::new(16.0 / 9.0, 400));
 
     let camara = Camara::Camara::new(
         imagen,

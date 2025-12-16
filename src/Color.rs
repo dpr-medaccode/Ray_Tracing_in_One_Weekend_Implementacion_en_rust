@@ -62,7 +62,7 @@ pub fn color_rayo(rayo: &Rayo, mundo: &dyn Golpeable, profundidad: i32) -> Color
 
     let unidad = Vec3::normalizar(&rayo.direccion());
     let t = 0.5 * (unidad.y() + 1.0);
-    BLANCO * (1.0 - t) + ATARDECER * t
+    BLANCO * (1.0 - t) + CIELO * t
 }
 
 pub fn mezclar_colores(color_1: &Color, color_2: &Color) -> Color {
