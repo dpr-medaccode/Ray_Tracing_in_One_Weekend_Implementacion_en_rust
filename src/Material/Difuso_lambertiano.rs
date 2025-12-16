@@ -12,14 +12,14 @@ impl DifusoLambertiano {
 }
 
 impl Material for DifusoLambertiano {
-    fn dispersion(&self, _rayo_entrante: &Rayo, golpe: &Golpe) -> Option<(Rayo, Color)> {
+    fn dispersion(&self, rayo_entrante: &Rayo, golpe: &Golpe) -> Option<(Rayo, Color)> {
         let mut direccion_dispersion = golpe.normal() + Vec3::normalizado_random();
 
         if direccion_dispersion.cerca_de_cero() {
             direccion_dispersion = golpe.normal();
         }
 
-        let rayo_resultante = Rayo::new(golpe.lugar(), direccion_dispersion);
+        let rayo_resultante = Rayo::new_con_tiempo(golpe.lugar(), direccion_dispersion, rayo_entrante.tiempo());
 
         Some((rayo_resultante, self.color))
     }

@@ -54,7 +54,7 @@ impl Material for Dielectrico {
             Vec3::refractar(&direccion_unitaria, &golpe.normal(), etai_over_etat)
         };
 
-        let rayo_salida = Rayo::new(golpe.lugar(), direccion);
+        let rayo_salida = Rayo::new_con_tiempo(golpe.lugar(), direccion, rayo_entrante.tiempo());
 
         Some((rayo_salida, atenuacion))
     }

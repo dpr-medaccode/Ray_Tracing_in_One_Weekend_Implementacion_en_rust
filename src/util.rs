@@ -7,6 +7,11 @@ pub fn grados_a_radianes(grados: f64) -> f64 {
     grados * PI / 180.0
 }
 
+pub fn ramdom() -> f64 {
+    let mut rng = rand::rng();
+    rng.random::<f64>()
+}
+
 pub fn random_entre(minimo: f64, maximo: f64) -> f64 {
     let mut rng = rand::rng();
     minimo + (maximo - minimo) * rng.random::<f64>()

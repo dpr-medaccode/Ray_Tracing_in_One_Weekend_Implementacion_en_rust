@@ -15,6 +15,7 @@ use crate::{
     Color::{INDIGO, NARANJA, ROJO, VERDE, atenuar_color, mezclar_colores},
     Golpe::Lista_golpeable::ListaGolpeable,
     Material::{Dielectrico::Dielectrico, Difuso_lambertiano::DifusoLambertiano, Metal::Metal},
+    util::random_entre,
 };
 
 fn main() {
@@ -25,7 +26,7 @@ fn main() {
     let material_suelo: Arc<dyn Material::Material> =
         Arc::new(DifusoLambertiano::new(Vec3::Vec3::new(0.5, 0.5, 0.5)));
 
-    mundo.push(Arc::new(Esfera::Esfera::new(
+    mundo.push(Arc::new(Esfera::Esfera::new_estatica(
         Vec3::Vec3::new(0.0, -1000.0, 0.0),
         1000.0,
         Arc::clone(&material_suelo),
@@ -47,17 +48,24 @@ fn main() {
                     let albedo = Vec3::Vec3::ramdon() * Vec3::Vec3::ramdon();
                     let material: Arc<dyn Material::Material> =
                         Arc::new(DifusoLambertiano::new(albedo));
-                    mundo.push(Arc::new(Esfera::Esfera::new(center, 0.2, material)));
+                    let centro_2 = center + Vec3::Vec3::new(0.0, random_entre(0.0, 0.5), 0.0);
+                    mundo.push(Arc::new(Esfera::Esfera::new_en_movimiento(
+                        center, centro_2, 0.2, material,
+                    )));
                 } else if choose_mat < 0.95 {
                     // Metal
                     let albedo = Vec3::Vec3::random_entre(0.5, 1.0);
                     let fuzz = 1.0;
                     let material: Arc<dyn Material::Material> = Arc::new(Metal::new(albedo, fuzz));
-                    mundo.push(Arc::new(Esfera::Esfera::new(center, 0.2, material)));
+                    mundo.push(Arc::new(Esfera::Esfera::new_estatica(
+                        center, 0.2, material,
+                    )));
                 } else {
                     // Vidrio
                     let material: Arc<dyn Material::Material> = Arc::new(Dielectrico::new(1.5));
-                    mundo.push(Arc::new(Esfera::Esfera::new(center, 0.2, material)));
+                    mundo.push(Arc::new(Esfera::Esfera::new_estatica(
+                        center, 0.2, material,
+                    )));
                 }
             }
         }
@@ -65,24 +73,23 @@ fn main() {
 
     // Esferas grandes
     let material1: Arc<dyn Material::Material> = Arc::new(Dielectrico::new(1.5));
-    mundo.push(Arc::new(Esfera::Esfera::new(
+    mundo.push(Arc::new(Esfera::Esfera::new_estatica(
         Vec3::Vec3::new(0.0, 1.0, 0.0),
         1.0,
         material1,
     )));
 
-    let material2: Arc<dyn Material::Material> = Arc::new(DifusoLambertiano::new(Vec3::Vec3::new(0.4, 0.2, 0.1)));
-    mundo.push(Arc::new(Esfera::Esfera::new(
+    let material2: Arc<dyn Material::Material> =
+        Arc::new(DifusoLambertiano::new(Vec3::Vec3::new(0.4, 0.2, 0.1)));
+    mundo.push(Arc::new(Esfera::Esfera::new_estatica(
         Vec3::Vec3::new(-4.0, 1.0, 0.0),
         1.0,
         material2,
     )));
 
-    let material3: Arc<dyn Material::Material> = Arc::new(Metal::new(
-        Vec3::Vec3::new(0.7, 0.6, 0.5),
-        0.5,
-    ));
-    mundo.push(Arc::new(Esfera::Esfera::new(
+    let material3: Arc<dyn Material::Material> =
+        Arc::new(Metal::new(Vec3::Vec3::new(0.7, 0.6, 0.5), 0.5));
+    mundo.push(Arc::new(Esfera::Esfera::new_estatica(
         Vec3::Vec3::new(4.0, 1.0, 0.0),
         1.0,
         material3,
@@ -110,5 +117,4 @@ fn main() {
     let mut writer = BufWriter::new(f);
 
     camara.render(&mut writer, true, true);
-    
 }

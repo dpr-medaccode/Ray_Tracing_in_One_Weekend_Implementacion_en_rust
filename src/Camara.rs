@@ -5,6 +5,7 @@ use std::{
     time::Instant,
 };
 
+use rand::Rng;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::{
@@ -13,9 +14,10 @@ use crate::{
     Imagen::Imagen,
     Rayo::Rayo,
     Vec3::Vec3,
+    util::ramdom,
 };
 
-const PROFUNDIDAD: i32 = 10;
+const PROFUNDIDAD: i32 = 50;
 
 const MUESTRA_POR_PIXEL: i32 = 100; // anti-aliasing
 const ESCALA_PIXEL_MUESTRA: f64 = 1.0 / MUESTRA_POR_PIXEL as f64;
@@ -114,7 +116,10 @@ impl Camara {
 
         let direccion = pixel_sample - origen;
 
-        Rayo::new(origen, direccion)
+        let mut rng = rand::rng();
+        let tiempo = rng.random::<f64>();
+
+        Rayo::new_con_tiempo(origen, direccion, tiempo)
     }
 
     fn cuadrado_muestra(&self) -> Vec3 {

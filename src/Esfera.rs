@@ -9,15 +9,28 @@ use crate::{
 };
 
 pub struct Esfera {
-    lugar: Vec3,
+    lugar: Rayo,
     radio: f64,
     material: Arc<dyn Material>,
 }
 
 impl Esfera {
-    pub fn new(lugar: Vec3, radio: f64, material: Arc<dyn Material>) -> Self {
+    pub fn new_estatica(lugar: Vec3, radio: f64, material: Arc<dyn Material>) -> Self {
         Self {
-            lugar,
+            lugar: Rayo::new(lugar, Vec3::new(0.0, 0.0, 0.0)),
+            radio,
+            material,
+        }
+    }
+
+    pub fn new_en_movimiento(
+        lugar1: Vec3,
+        lugar2: Vec3,
+        radio: f64,
+        material: Arc<dyn Material>,
+    ) -> Self {
+        Self {
+            lugar: Rayo::new(lugar1, lugar2 - lugar1),
             radio,
             material,
         }
@@ -27,7 +40,10 @@ impl Esfera {
 impl Golpeable for Esfera {
     fn rayo_golpea(&self, rayo: &Rayo, intervalo: &Intervalo) -> Option<Golpe> {
         // Vector desde el origen del rayo hasta el centro de la esfera
-        let oc = self.lugar - rayo.origen();
+
+        let lugar_actual = self.lugar.en(rayo.tiempo());
+
+        let oc = lugar_actual - rayo.origen();
 
         // Coeficientes cuadráticos para la ecuación del rayo-esfera
         let a = Vec3::punto(&rayo.direccion(), &rayo.direccion()); // D·D
@@ -56,7 +72,7 @@ impl Golpeable for Esfera {
         let lugar_golpe = rayo.en(distancia);
 
         // Normal de la superficie apuntando hacia afuera
-        let normal_exterior = Vec3::normalizar(&(lugar_golpe - self.lugar));
+        let normal_exterior = (lugar_golpe - lugar_actual) / self.radio; // Vec3::normalizar(&(lugar_golpe - lugar_actual)); lo mismo
 
         Some(Golpe::new(
             lugar_golpe,

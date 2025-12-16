@@ -21,7 +21,7 @@ impl Material for Metal {
 
         let reflejado = reflejado + self.borroso * Vec3::normalizado_random();
 
-        let rayo_salida = Rayo::new(golpe.lugar(), reflejado);
+        let rayo_salida = Rayo::new_con_tiempo(golpe.lugar(), reflejado, rayo_entrante.tiempo());
 
         if Vec3::punto(&rayo_salida.direccion(), &golpe.normal()) <= 0.0 {
             return None;
