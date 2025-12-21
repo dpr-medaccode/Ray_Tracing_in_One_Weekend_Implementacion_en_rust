@@ -14,7 +14,6 @@ use crate::{
     Imagen::Imagen,
     Rayo::Rayo,
     Vec3::Vec3,
-    util::ramdom,
 };
 
 const PROFUNDIDAD: i32 = 50;

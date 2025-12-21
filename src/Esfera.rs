@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
+    Caja::Caja,
     Golpe::{Golpe, Golpeable::Golpeable},
     Intervalo::Intervalo,
     Material::Material,
@@ -8,18 +9,26 @@ use crate::{
     Vec3::Vec3,
 };
 
+
+
 pub struct Esfera {
     lugar: Rayo,
     radio: f64,
     material: Arc<dyn Material>,
+    caja: Caja,
 }
+
+
 
 impl Esfera {
     pub fn new_estatica(lugar: Vec3, radio: f64, material: Arc<dyn Material>) -> Self {
+        let tamanno = Vec3::new(radio, radio, radio);
+
         Self {
             lugar: Rayo::new(lugar, Vec3::new(0.0, 0.0, 0.0)),
             radio,
             material,
+            caja: Caja::new(lugar - tamanno, lugar + tamanno),
         }
     }
 
@@ -29,22 +38,33 @@ impl Esfera {
         radio: f64,
         material: Arc<dyn Material>,
     ) -> Self {
+        let tamanno = Vec3::new(radio, radio, radio);
+        let lugar = Rayo::new(lugar1, lugar2 - lugar1);
+
+        let caja1 = Caja::new(lugar.en(0.0) - tamanno, lugar.en(0.0) + tamanno);
+        let caja2 = Caja::new(lugar.en(1.0) - tamanno, lugar.en(1.0) + tamanno);
+
         Self {
-            lugar: Rayo::new(lugar1, lugar2 - lugar1),
+            lugar,
             radio,
             material,
+            caja: Caja::new_from_cajas(caja1, caja2),
         }
     }
 }
 
 impl Golpeable for Esfera {
+    fn caja(&self) -> Caja {
+        self.caja
+    }
+
     fn rayo_golpea(&self, rayo: &Rayo, intervalo: &Intervalo) -> Option<Golpe> {
         // Vector desde el origen del rayo hasta el centro de la esfera
 
         let lugar_actual = self.lugar.en(rayo.tiempo());
 
         let oc = lugar_actual - rayo.origen();
-
+ 
         // Coeficientes cuadráticos para la ecuación del rayo-esfera
         let a = Vec3::punto(&rayo.direccion(), &rayo.direccion()); // D·D
         let h = Vec3::punto(&rayo.direccion(), &oc); // D·(C-Q)

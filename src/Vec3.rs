@@ -4,7 +4,7 @@ use crate::{
     Intervalo::Intervalo,
     util::{random_entre, random_entre_intervalo},
 };
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, Div, Index, Mul, Neg, Sub};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Vec3 {
@@ -203,6 +203,15 @@ impl Mul<Vec3> for f64 {
     #[inline]
     fn mul(self, valor: Vec3) -> Vec3 {
         valor * self
+    }
+}
+
+impl Index<usize> for Vec3 {
+    type Output = f64;
+
+    #[inline]
+    fn index(&self, i: usize) -> &Self::Output {
+        &self.e[i]
     }
 }
 

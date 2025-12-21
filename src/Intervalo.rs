@@ -10,6 +10,21 @@ impl Intervalo {
         Self { minimo, maximo }
     }
 
+    pub fn new_from_intervalos(a: Intervalo, b: Intervalo) -> Self {
+        Self {
+            minimo: if a.minimo <= b.minimo {
+                a.minimo
+            } else {
+                b.minimo
+            },
+            maximo: if a.maximo >= b.maximo {
+                a.maximo
+            } else {
+                b.maximo
+            },
+        }
+    }
+
     /// Equivalente a constructor por defecto (Infinity, -Infinity)
     pub fn vacio() -> Self {
         Self {
@@ -46,5 +61,13 @@ impl Intervalo {
         } else {
             x
         }
+    }
+
+    pub fn expandir(&self, delta: f64) -> Self {
+        let pading = delta / 2.0;
+        return Intervalo {
+            minimo: self.minimo - pading,
+            maximo: self.maximo + pading,
+        };
     }
 }

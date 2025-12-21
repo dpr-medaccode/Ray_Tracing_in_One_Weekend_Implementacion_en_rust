@@ -8,6 +8,7 @@ mod Material;
 mod Rayo;
 mod Vec3;
 mod util;
+mod Caja;
 
 use std::{fs::File, io::BufWriter, sync::Arc};
 
