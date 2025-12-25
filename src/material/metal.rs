@@ -1,4 +1,4 @@
-use crate::{Color::Color, Golpe::Golpe, Material::Material, Rayo::Rayo, Vec3::Vec3};
+use crate::{color::Color, golpe::Golpe, material::Material, rayo::Rayo, vec3::Vec3};
 
 pub struct Metal {
     color: Color,

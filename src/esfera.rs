@@ -1,12 +1,12 @@
 use std::sync::Arc;
 
 use crate::{
-    Caja::Caja,
-    Golpe::{Golpe, Golpeable::Golpeable},
-    Intervalo::Intervalo,
-    Material::Material,
-    Rayo::Rayo,
-    Vec3::Vec3,
+    caja::Caja,
+    golpe::{Golpe, golpeable::Golpeable},
+    intervalo::Intervalo,
+    material::Material,
+    rayo::Rayo,
+    vec3::Vec3,
 };
 
 

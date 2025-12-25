@@ -9,11 +9,11 @@ use rand::Rng;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::{
-    Color::{color_rayo, escribir_color},
-    Golpe::Lista_golpeable::ListaGolpeable,
-    Imagen::Imagen,
-    Rayo::Rayo,
-    Vec3::Vec3,
+    color::{color_rayo, escribir_color},
+    golpe::lista_golpeable::ListaGolpeable,
+    imagen::Imagen,
+    rayo::Rayo,
+    vec3::Vec3,
 };
 
 const PROFUNDIDAD: i32 = 50;

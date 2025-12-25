@@ -2,11 +2,10 @@ use std::cmp::Ordering;
 use std::sync::Arc;
 
 use crate::{
-    Caja::Caja,
-    Golpe::{Golpe, Golpeable::Golpeable, Lista_golpeable::ListaGolpeable},
-    Intervalo::Intervalo,
-    Rayo::Rayo,
-    util,
+    caja::{Caja, Eje},
+    golpe::{Golpe, golpeable::Golpeable, lista_golpeable::ListaGolpeable},
+    intervalo::Intervalo,
+    rayo::Rayo,
 };
 
 pub struct Nodo {
@@ -21,41 +20,44 @@ impl Nodo {
     }
 
     pub fn new(objetos: &mut Vec<Arc<dyn Golpeable>>, inicio: usize, fin: usize) -> Self {
-        let comparadores = [
-            Nodo::comparar_caja_x,
-            Nodo::comparar_caja_y,
-            Nodo::comparar_caja_z,
-        ];
-
         let mut caja = Caja::vacio();
 
         for i in inicio..fin {
-
             caja = Caja::new_from_cajas(caja, objetos[i].caja())
-
         }
 
         let eje = caja.eje_mas_largo();
 
-        let comparador = comparadores[eje];
+        let comparador = match eje {
+            Eje::X => Nodo::comparar_caja_x,
+            Eje::Y => Nodo::comparar_caja_y,
+            Eje::Z => Nodo::comparar_caja_z,
+        };
 
         let tamanno = fin - inicio;
 
         let izquierda: Arc<dyn Golpeable>;
         let derecha: Arc<dyn Golpeable>;
 
-        if tamanno == 1 {
-            izquierda = objetos[inicio].clone();
-            derecha = objetos[inicio].clone();
-        } else if tamanno == 2 {
-            izquierda = objetos[inicio].clone();
-            derecha = objetos[inicio + 1].clone();
-        } else {
-            objetos[inicio..fin].sort_by(comparador);
+        match tamanno {
+            1 => {
+                izquierda = objetos[inicio].clone();
+                derecha = objetos[inicio].clone();
+            }
 
-            let mid = inicio + tamanno / 2;
-            izquierda = Arc::new(Nodo::new(objetos, inicio, mid));
-            derecha = Arc::new(Nodo::new(objetos, mid, fin));
+            2 => {
+                izquierda = objetos[inicio].clone();
+                derecha = objetos[inicio + 1].clone();
+            }
+
+            _ => {
+                objetos[inicio..fin].sort_by(comparador);
+
+                let mid = inicio + tamanno / 2;
+
+                izquierda = Arc::new(Nodo::new(objetos, inicio, mid));
+                derecha = Arc::new(Nodo::new(objetos, mid, fin));
+            }
         }
 
         let caja_izq = izquierda.caja();
@@ -99,6 +101,7 @@ impl Golpeable for Nodo {
     }
 
     fn rayo_golpea(&self, rayo: &Rayo, intervalo: Intervalo) -> Option<Golpe> {
+
         let intervalo = self.caja.rayo_golpea_caja(rayo, intervalo)?;
 
         let golpe_izq = self.izquierda.rayo_golpea(rayo, intervalo);

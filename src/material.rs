@@ -1,8 +1,8 @@
-pub mod Dielectrico;
-pub mod Difuso_lambertiano;
-pub mod Metal;
+pub mod dielectrico;
+pub mod difuso_lambertiano;
+pub mod metal;
 
-use crate::{Color::Color, Golpe::Golpe, Rayo::Rayo};
+use crate::{color::Color, golpe::Golpe, rayo::Rayo};
 
 pub trait Material: Send + Sync {
     fn dispersion(&self, rayo_entrante: &Rayo, golpe: &Golpe) -> Option<(Rayo, Color)>;

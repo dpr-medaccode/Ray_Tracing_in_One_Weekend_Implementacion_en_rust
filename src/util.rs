@@ -1,7 +1,9 @@
+#![allow(dead_code)]
+
 use rand::Rng;
 use std::f64::consts::PI;
 
-use crate::Intervalo::Intervalo;
+use crate::intervalo::Intervalo;
 
 pub fn grados_a_radianes(grados: f64) -> f64 {
     grados * PI / 180.0
@@ -26,14 +28,6 @@ pub fn random_i32_entre(minimo: i32, maximo: i32) -> i32 {
     let mut rng = rand::rng();
     minimo + (maximo - minimo) * rng.random::<i32>()
 }
-
-pub fn random_usize_entre(minimo: usize, maximo: usize) -> usize {
-    use rand::Rng; // Importa el trait para gen_range
-
-    let mut rng = rand::thread_rng(); // Crea un generador aleatorio para el hilo actual
-    rng.gen_range(minimo..maximo)     // Devuelve un valor en [minimo, maximo)
-}
-
 
 pub fn random_entre_intervalo(intervalo: Intervalo) -> f64 {
     let mut rng = rand::rng();

@@ -1,0 +1,129 @@
+#![allow(dead_code)]
+use crate::{intervalo::Intervalo, rayo::Rayo, vec3::Vec3};
+
+#[derive(Debug, Clone, Copy)]
+pub struct Caja {
+    pub x: Intervalo,
+    pub y: Intervalo,
+    pub z: Intervalo,
+}
+
+impl Caja {
+    pub fn new_vacio() -> Self {
+        Caja {
+            x: Intervalo {
+                minimo: f64::INFINITY,
+                maximo: f64::NEG_INFINITY,
+            },
+
+            y: Intervalo {
+                minimo: f64::INFINITY,
+                maximo: f64::NEG_INFINITY,
+            },
+
+            z: Intervalo {
+                minimo: f64::INFINITY,
+                maximo: f64::NEG_INFINITY,
+            },
+        }
+    }
+
+    pub fn new(a: Vec3, b: Vec3) -> Self {
+        Caja {
+            x: if a.x() <= b.x() {
+                Intervalo::new(a.x(), b.x())
+            } else {
+                Intervalo::new(b.x(), a.x())
+            },
+            y: if a.y() <= b.y() {
+                Intervalo::new(a.y(), b.y())
+            } else {
+                Intervalo::new(b.y(), a.y())
+            },
+            z: if a.z() <= b.z() {
+                Intervalo::new(a.z(), b.z())
+            } else {
+                Intervalo::new(b.z(), a.z())
+            },
+        }
+    }
+
+    pub fn new_from_cajas(a: Caja, b: Caja) -> Self {
+        Self {
+            x: Intervalo::new_from_intervalos(a.x, b.x),
+            y: Intervalo::new_from_intervalos(a.y, b.y),
+            z: Intervalo::new_from_intervalos(a.z, b.z),
+        }
+    }
+
+    pub fn rayo_golpea_caja(&self, rayo: &Rayo, intervalo: Intervalo) -> Option<Intervalo> {
+        let mut t = intervalo;
+
+        let origen = rayo.origen();
+        let direccion = rayo.direccion();
+
+        for eje in [Eje::X, Eje::Y, Eje::Z] {
+
+            let (eje_intervalo, ori, dir) = match eje {
+                Eje::X => (self.x, origen.x(), direccion.x()),
+                Eje::Y => (self.y, origen.y(), direccion.y()),
+                Eje::Z => (self.z, origen.z(), direccion.z()),
+            };
+
+            let inv_d = 1.0 / dir;
+
+            let mut t0 = (eje_intervalo.minimo - ori) * inv_d;
+            let mut t1 = (eje_intervalo.maximo - ori) * inv_d;
+
+            if t0 > t1 {
+                std::mem::swap(&mut t0, &mut t1);
+            }
+
+            t.minimo = t.minimo.max(t0);
+            t.maximo = t.maximo.min(t1);
+
+            if t.maximo <= t.minimo {
+                return None;
+            }
+        }
+
+        Some(t)
+    }
+
+    pub fn eje_mas_largo(&self) -> Eje {
+        let tx = self.x.tamanno();
+        let ty = self.y.tamanno();
+        let tz = self.z.tamanno();
+
+        if tx >= ty && tx >= tz {
+            Eje::X
+        } else if ty >= tz {
+            Eje::Y
+        } else {
+            Eje::Z
+        }
+    }
+
+    pub fn vacio() -> Self {
+        Caja {
+            x: Intervalo::vacio(),
+            y: Intervalo::vacio(),
+            z: Intervalo::vacio(),
+        }
+    }
+
+    pub fn universo() -> Self {
+        Caja {
+            x: Intervalo::universo(),
+            y: Intervalo::universo(),
+            z: Intervalo::universo(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Eje {
+    X,
+    Y,
+    Z,
+}

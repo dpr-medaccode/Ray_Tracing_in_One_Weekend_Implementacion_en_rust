@@ -1,11 +1,11 @@
 use rand::Rng;
 
 use crate::{
-    Color::{BLANCO, Color},
-    Golpe::Golpe,
-    Material::Material,
-    Rayo::Rayo,
-    Vec3::Vec3,
+    color::{BLANCO, Color},
+    golpe::Golpe,
+    material::Material,
+    rayo::Rayo,
+    vec3::Vec3,
 };
 
 pub struct Dielectrico {

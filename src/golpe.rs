@@ -1,13 +1,13 @@
 use std::sync::Arc;
 
 use crate::{
-    Material::Material,
-    Rayo::Rayo,
-    Vec3::{Point3, Vec3},
+    material::Material,
+    rayo::Rayo,
+    vec3::{Point3, Vec3},
 };
 
-pub mod Golpeable;
-pub mod Lista_golpeable;
+pub mod golpeable;
+pub mod lista_golpeable;
 
 pub struct Golpe {
     lugar: Point3,

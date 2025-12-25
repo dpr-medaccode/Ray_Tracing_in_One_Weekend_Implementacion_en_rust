@@ -1,7 +1,7 @@
 use rand::Rng;
 
 use crate::{
-    Intervalo::Intervalo,
+    intervalo::Intervalo,
     util::{random_f64_entre, random_entre_intervalo},
 };
 use std::ops::{Add, Div, Index, Mul, Neg, Sub};

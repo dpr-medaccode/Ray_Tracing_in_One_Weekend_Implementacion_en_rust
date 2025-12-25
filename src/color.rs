@@ -1,4 +1,5 @@
-use crate::{Golpe::Golpeable::Golpeable, Intervalo::Intervalo, Rayo::Rayo, Vec3::Vec3};
+#![allow(dead_code)]
+use crate::{golpe::golpeable::Golpeable, intervalo::Intervalo, rayo::Rayo, vec3::Vec3};
 
 pub type Color = Vec3;
 

@@ -1,10 +1,11 @@
+#![allow(dead_code)]
 use std::sync::Arc;
 
 use crate::{
-    Caja::Caja,
-    Golpe::{Golpe, Golpeable::Golpeable},
-    Intervalo::Intervalo,
-    Rayo::Rayo,
+    caja::Caja,
+    golpe::{Golpe, golpeable::Golpeable},
+    intervalo::Intervalo,
+    rayo::Rayo,
 };
 
 pub struct ListaGolpeable {
