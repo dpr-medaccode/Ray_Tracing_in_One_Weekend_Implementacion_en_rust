@@ -1,10 +1,10 @@
-use crate::{Golpe::Golpeable::Golpeable, Intervalo::Intervalo, Rayo::Rayo, Vec3::Vec3};
+use crate::{Intervalo::Intervalo, Rayo::Rayo, Vec3::Vec3};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Caja {
-    x: Intervalo,
-    y: Intervalo,
-    z: Intervalo,
+    pub x: Intervalo,
+    pub y: Intervalo,
+    pub z: Intervalo,
 }
 
 impl Caja {
@@ -57,34 +57,59 @@ impl Caja {
         }
     }
 
-    pub fn rayo_golpea(&self, rayo: &Rayo, intervalo: &mut Intervalo) -> bool {
+    pub fn rayo_golpea_caja(&self, rayo: &Rayo, intervalo: Intervalo) -> Option<Intervalo> {
+        let mut intervalo: Intervalo = intervalo.clone();
+
         let ejes = [self.x, self.y, self.z];
 
         for (i, eje) in ejes.iter().enumerate() {
-            let direccion_inversa = 1.0 / rayo.direccion()[i];
+            let inv_dir = 1.0 / rayo.direccion()[i];
 
-            let mut entrada = (eje.minimo - rayo.origen()[i]) * direccion_inversa;
-            let mut salida = (eje.maximo - rayo.origen()[i]) * direccion_inversa;
+            let mut t0 = (eje.minimo - rayo.origen()[i]) * inv_dir;
+            let mut t1 = (eje.maximo - rayo.origen()[i]) * inv_dir;
 
-            // Asegurarse de que t0 <= t1
-            if entrada > salida {
-                std::mem::swap(&mut entrada, &mut salida);
+            if t0 > t1 {
+                std::mem::swap(&mut t0, &mut t1);
             }
 
-            // Actualizar el intervalo
-            if entrada > intervalo.minimo {
-                intervalo.minimo = entrada;
-            }
-            if salida < intervalo.maximo {
-                intervalo.maximo = salida;
-            }
+            intervalo.minimo = intervalo.minimo.max(t0);
+            intervalo.maximo = intervalo.maximo.min(t1);
 
-            // Si el intervalo se vuelve inválido, el rayo no golpea la caja
             if intervalo.maximo <= intervalo.minimo {
-                return false;
+                return None;
             }
         }
 
-        true
+        Some(intervalo)
+    }
+
+    pub fn eje_mas_largo(&self) -> usize {
+        let tx = self.x.tamanno();
+        let ty = self.y.tamanno();
+        let tz = self.z.tamanno();
+
+        if tx >= ty && tx >= tz {
+            0
+        } else if ty >= tz {
+            1
+        } else {
+            2
+        }
+    }
+
+    pub fn vacio() -> Self {
+        Caja {
+            x: Intervalo::vacio(),
+            y: Intervalo::vacio(),
+            z: Intervalo::vacio(),
+        }
+    }
+
+    pub fn universo() -> Self {
+        Caja {
+            x: Intervalo::universo(),
+            y: Intervalo::universo(),
+            z: Intervalo::universo(),
+        }
     }
 }

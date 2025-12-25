@@ -58,7 +58,7 @@ impl Golpeable for Esfera {
         self.caja
     }
 
-    fn rayo_golpea(&self, rayo: &Rayo, intervalo: &Intervalo) -> Option<Golpe> {
+    fn rayo_golpea(&self, rayo: &Rayo, intervalo: Intervalo) -> Option<Golpe> {
         // Vector desde el origen del rayo hasta el centro de la esfera
 
         let lugar_actual = self.lugar.en(rayo.tiempo());

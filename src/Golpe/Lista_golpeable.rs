@@ -20,6 +20,12 @@ impl ListaGolpeable {
         }
     }
 
+    pub fn objetos(&self) -> Vec<Arc<dyn Golpeable>>{
+
+        self.objetos.clone()
+
+    }
+
     pub fn from(lista: Vec<Arc<dyn Golpeable>>) -> Self {
         let mut lista_golpeable = Self {
             objetos: Vec::new(),
@@ -49,7 +55,7 @@ impl Golpeable for ListaGolpeable {
         self.caja
     }
 
-    fn rayo_golpea(&self, rayo: &Rayo, intervalo: &Intervalo) -> Option<Golpe> {
+    fn rayo_golpea(&self, rayo: &Rayo, intervalo: Intervalo) -> Option<Golpe> {
         let mut golpe_cercano: Option<Golpe> = None;
 
         let mut lugar_mas_cercano = intervalo.maximo;
@@ -57,7 +63,7 @@ impl Golpeable for ListaGolpeable {
         for objeto in &self.objetos {
             let intervalo_temp = Intervalo::new(intervalo.minimo, lugar_mas_cercano);
 
-            if let Some(golpe) = objeto.rayo_golpea(rayo, &intervalo_temp) {
+            if let Some(golpe) = objeto.rayo_golpea(rayo, intervalo_temp) {
                 lugar_mas_cercano = golpe.distancia();
                 golpe_cercano = Some(golpe);
             }

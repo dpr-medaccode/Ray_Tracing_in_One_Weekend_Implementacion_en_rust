@@ -2,7 +2,7 @@ use rand::Rng;
 
 use crate::{
     Intervalo::Intervalo,
-    util::{random_entre, random_entre_intervalo},
+    util::{random_f64_entre, random_entre_intervalo},
 };
 use std::ops::{Add, Div, Index, Mul, Neg, Sub};
 
@@ -103,9 +103,9 @@ impl Vec3 {
 
     pub fn random_entre(minimo: f64, maximo: f64) -> Self {
         Self::new(
-            random_entre(minimo, maximo),
-            random_entre(minimo, maximo),
-            random_entre(minimo, maximo),
+            random_f64_entre(minimo, maximo),
+            random_f64_entre(minimo, maximo),
+            random_f64_entre(minimo, maximo),
         )
     }
 
@@ -129,7 +129,7 @@ impl Vec3 {
 
     pub fn aleatorio_en_disco() -> Self {
         loop {
-            let punto = Self::new(random_entre(-1.0, 1.0), random_entre(-1.0, 1.0), 0.0);
+            let punto = Self::new(random_f64_entre(-1.0, 1.0), random_f64_entre(-1.0, 1.0), 0.0);
 
             if punto.logitud_cuadrada() < 1.0 {
                 return punto;

@@ -7,15 +7,33 @@ pub fn grados_a_radianes(grados: f64) -> f64 {
     grados * PI / 180.0
 }
 
-pub fn ramdom() -> f64 {
+pub fn ramdom_f64() -> f64 {
     let mut rng = rand::rng();
     rng.random::<f64>()
 }
 
-pub fn random_entre(minimo: f64, maximo: f64) -> f64 {
+pub fn random_f64_entre(minimo: f64, maximo: f64) -> f64 {
     let mut rng = rand::rng();
     minimo + (maximo - minimo) * rng.random::<f64>()
 }
+
+pub fn ramdom_i32() -> i32 {
+    let mut rng = rand::rng();
+    rng.random::<i32>()
+}
+
+pub fn random_i32_entre(minimo: i32, maximo: i32) -> i32 {
+    let mut rng = rand::rng();
+    minimo + (maximo - minimo) * rng.random::<i32>()
+}
+
+pub fn random_usize_entre(minimo: usize, maximo: usize) -> usize {
+    use rand::Rng; // Importa el trait para gen_range
+
+    let mut rng = rand::thread_rng(); // Crea un generador aleatorio para el hilo actual
+    rng.gen_range(minimo..maximo)     // Devuelve un valor en [minimo, maximo)
+}
+
 
 pub fn random_entre_intervalo(intervalo: Intervalo) -> f64 {
     let mut rng = rand::rng();

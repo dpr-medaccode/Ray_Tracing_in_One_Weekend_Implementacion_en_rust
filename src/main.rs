@@ -1,3 +1,4 @@
+mod Caja;
 mod Camara;
 mod Color;
 mod Esfera;
@@ -5,10 +6,10 @@ mod Golpe;
 mod Imagen;
 mod Intervalo;
 mod Material;
+mod Nodo;
 mod Rayo;
 mod Vec3;
 mod util;
-mod Caja;
 
 use std::{fs::File, io::BufWriter, sync::Arc};
 
@@ -16,7 +17,7 @@ use crate::{
     Color::{INDIGO, NARANJA, ROJO, VERDE, atenuar_color, mezclar_colores},
     Golpe::Lista_golpeable::ListaGolpeable,
     Material::{Dielectrico::Dielectrico, Difuso_lambertiano::DifusoLambertiano, Metal::Metal},
-    util::random_entre,
+    util::random_f64_entre,
 };
 
 fn main() {
@@ -49,7 +50,7 @@ fn main() {
                     let albedo = Vec3::Vec3::ramdon() * Vec3::Vec3::ramdon();
                     let material: Arc<dyn Material::Material> =
                         Arc::new(DifusoLambertiano::new(albedo));
-                    let centro_2 = center + Vec3::Vec3::new(0.0, random_entre(0.0, 0.5), 0.0);
+                    let centro_2 = center + Vec3::Vec3::new(0.0, random_f64_entre(0.0, 0.5), 0.0);
                     mundo.push(Arc::new(Esfera::Esfera::new_en_movimiento(
                         center, centro_2, 0.2, material,
                     )));
@@ -95,6 +96,9 @@ fn main() {
         1.0,
         material3,
     )));
+
+   
+    mundo = ListaGolpeable::from(vec![Arc::new(Nodo::Nodo::new_from_lista(&mut mundo))]);
 
     // Cámara
     let de_donde_mira = Vec3::Vec3::new(13.0, 2.0, 3.0);

@@ -48,7 +48,7 @@ fn to_byte(v: f64) -> u8 {
 }
 
 pub fn color_rayo(rayo: &Rayo, mundo: &dyn Golpeable, profundidad: i32) -> Color {
-    if let Some(golpe) = mundo.rayo_golpea(rayo, &Intervalo::new(0.001, f64::INFINITY)) {
+    if let Some(golpe) = mundo.rayo_golpea(rayo, Intervalo::new(0.001, f64::INFINITY)) {
         if profundidad <= 0 {
             return NEGRO;
         }
