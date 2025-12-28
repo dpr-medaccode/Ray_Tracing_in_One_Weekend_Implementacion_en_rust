@@ -17,7 +17,7 @@ impl ListaGolpeable {
     pub fn new() -> Self {
         Self {
             objetos: Vec::new(),
-            caja: Caja::new_vacio(),
+            caja: Caja::vacio(),
         }
     }
 
@@ -30,7 +30,7 @@ impl ListaGolpeable {
     pub fn from(lista: Vec<Arc<dyn Golpeable>>) -> Self {
         let mut lista_golpeable = Self {
             objetos: Vec::new(),
-            caja: Caja::new_vacio(),
+            caja: Caja::vacio(),
         };
 
         for obj in lista {
@@ -42,7 +42,7 @@ impl ListaGolpeable {
 
     pub fn clear(&mut self) {
         self.objetos.clear();
-        self.caja = Caja::new_vacio();
+        self.caja = Caja::vacio();
     }
 
     pub fn push(&mut self, obj: Arc<dyn Golpeable>) {

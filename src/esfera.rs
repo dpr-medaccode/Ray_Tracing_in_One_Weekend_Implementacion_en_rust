@@ -9,16 +9,12 @@ use crate::{
     vec3::Vec3,
 };
 
-
-
 pub struct Esfera {
     lugar: Rayo,
     radio: f64,
     material: Arc<dyn Material>,
     caja: Caja,
 }
-
-
 
 impl Esfera {
     pub fn new_estatica(lugar: Vec3, radio: f64, material: Arc<dyn Material>) -> Self {
@@ -64,7 +60,7 @@ impl Golpeable for Esfera {
         let lugar_actual = self.lugar.en(rayo.tiempo());
 
         let oc = lugar_actual - rayo.origen();
- 
+
         // Coeficientes cuadráticos para la ecuación del rayo-esfera
         let a = Vec3::punto(&rayo.direccion(), &rayo.direccion()); // D·D
         let h = Vec3::punto(&rayo.direccion(), &oc); // D·(C-Q)

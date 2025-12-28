@@ -9,24 +9,6 @@ pub struct Caja {
 }
 
 impl Caja {
-    pub fn new_vacio() -> Self {
-        Caja {
-            x: Intervalo {
-                minimo: f64::INFINITY,
-                maximo: f64::NEG_INFINITY,
-            },
-
-            y: Intervalo {
-                minimo: f64::INFINITY,
-                maximo: f64::NEG_INFINITY,
-            },
-
-            z: Intervalo {
-                minimo: f64::INFINITY,
-                maximo: f64::NEG_INFINITY,
-            },
-        }
-    }
 
     pub fn new(a: Vec3, b: Vec3) -> Self {
         Caja {
@@ -59,21 +41,18 @@ impl Caja {
     pub fn rayo_golpea_caja(&self, rayo: &Rayo, intervalo: Intervalo) -> Option<Intervalo> {
         let mut t = intervalo;
 
-        let origen = rayo.origen();
-        let direccion = rayo.direccion();
-
         for eje in [Eje::X, Eje::Y, Eje::Z] {
-
-            let (eje_intervalo, ori, dir) = match eje {
-                Eje::X => (self.x, origen.x(), direccion.x()),
-                Eje::Y => (self.y, origen.y(), direccion.y()),
-                Eje::Z => (self.z, origen.z(), direccion.z()),
+            
+            let (eje_intervalo, origen, direccion) = match eje {
+                Eje::X => (self.x, rayo.origen().x(), rayo.direccion().x()),
+                Eje::Y => (self.y, rayo.origen().y(), rayo.direccion().y()),
+                Eje::Z => (self.z, rayo.origen().z(), rayo.direccion().z()),
             };
 
-            let inv_d = 1.0 / dir;
+            let inv_d = 1.0 / direccion;
 
-            let mut t0 = (eje_intervalo.minimo - ori) * inv_d;
-            let mut t1 = (eje_intervalo.maximo - ori) * inv_d;
+            let mut t0 = (eje_intervalo.minimo - origen) * inv_d;
+            let mut t1 = (eje_intervalo.maximo - origen) * inv_d;
 
             if t0 > t1 {
                 std::mem::swap(&mut t0, &mut t1);

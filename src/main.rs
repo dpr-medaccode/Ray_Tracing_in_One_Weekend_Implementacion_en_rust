@@ -8,8 +8,8 @@ mod intervalo;
 mod material;
 mod nodo;
 mod rayo;
-mod vec3;
 mod util;
+mod vec3;
 
 use std::{fs::File, io::BufWriter, sync::Arc};
 
@@ -96,7 +96,6 @@ fn main() {
         material3,
     )));
 
-   
     mundo = ListaGolpeable::from(vec![Arc::new(nodo::Nodo::new_from_lista(&mut mundo))]);
 
     // Cámara

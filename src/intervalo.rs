@@ -25,7 +25,6 @@ impl Intervalo {
         }
     }
 
-    /// Equivalente a constructor por defecto (Infinity, -Infinity)
     pub fn vacio() -> Self {
         Self {
             minimo: f64::INFINITY,
