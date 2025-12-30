@@ -13,6 +13,8 @@ pub struct Golpe {
     lugar: Point3,
     normal: Vec3,
     distancia: f64,
+    textura_horizontal: f64,
+    textura_vertical: f64,
     cara_frontal: bool,
     material: Arc<dyn Material>,
 }
@@ -22,6 +24,8 @@ impl Golpe {
         lugar_golpe: Point3,
         normal_exterior: Vec3,
         distancia: f64,
+        textura_horizontal: f64,
+        textura_vertical: f64,
         rayo: &Rayo,
         material: Arc<dyn Material>,
     ) -> Self {
@@ -31,6 +35,8 @@ impl Golpe {
             lugar: lugar_golpe,
             normal,
             distancia,
+            textura_horizontal,
+            textura_vertical,
             cara_frontal,
             material,
         }
@@ -43,6 +49,12 @@ impl Golpe {
     }
     pub fn distancia(&self) -> f64 {
         self.distancia
+    }
+    pub fn textura_horizontal(&self) -> f64 {
+        self.textura_horizontal
+    }
+    pub fn textura_vertical(&self) -> f64 {
+        self.textura_vertical
     }
     pub fn cara_frontal(&self) -> bool {
         self.cara_frontal

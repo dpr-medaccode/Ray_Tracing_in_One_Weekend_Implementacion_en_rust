@@ -11,7 +11,7 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use crate::{
     color::{color_rayo, escribir_color},
     golpe::lista_golpeable::ListaGolpeable,
-    imagen::Imagen,
+    output::Output,
     rayo::Rayo,
     vec3::Vec3,
 };
@@ -24,7 +24,7 @@ const ESCALA_PIXEL_MUESTRA: f64 = 1.0 / MUESTRA_POR_PIXEL as f64;
 const NUMERO_DE_HILOS: u32 = 8;
 
 pub struct Camara {
-    imagen: Arc<Imagen>,
+    output: Arc<Output>,
     mundo: ListaGolpeable,
 
     origen: Vec3,
@@ -43,7 +43,7 @@ pub struct Camara {
 
 impl Camara {
     pub fn new(
-        imagen: Arc<Imagen>,
+        imagen: Arc<Output>,
         mundo: ListaGolpeable,
         fov_vertical: f64,
         de_donde_mira: Vec3,
@@ -87,7 +87,7 @@ impl Camara {
         let disco_desenfoque_v = arriba_v * radio_desenfoque;
 
         Self {
-            imagen,
+            output: imagen,
             mundo,
             origen,
             delta_pixel_x,
@@ -135,13 +135,13 @@ impl Camara {
     }
 
     pub fn render<W: Write>(&self, writer: &mut W, mostrar_lineas: bool, medir_tiempo: bool) {
-        let alto = self.imagen.alto();
-        let ancho = self.imagen.ancho();
+        let alto = self.output.alto();
+        let ancho = self.output.ancho();
         let inicio_total = Instant::now();
         let tamanno_chunk = alto / NUMERO_DE_HILOS;
 
         writer
-            .write_all(self.imagen.encabezado_imagen().as_bytes())
+            .write_all(self.output.encabezado_imagen().as_bytes())
             .unwrap();
 
         (0..NUMERO_DE_HILOS).into_par_iter().for_each(|id_bloque| {

@@ -6,7 +6,7 @@ use crate::{
     intervalo::Intervalo,
     material::Material,
     rayo::Rayo,
-    vec3::Vec3,
+    vec3::{Point3, Vec3},
 };
 
 pub struct Esfera {
@@ -46,6 +46,20 @@ impl Esfera {
             material,
             caja: Caja::new_from_cajas(caja1, caja2),
         }
+    }
+
+    fn cordenada_textura(lugar: Point3) -> (f64, f64) {
+        // lugar: a given point on the sphere of radius one, centered at the origin.
+        // u: returned value [0,1] of angle around the Y axis from X=-1.
+        // v: returned value [0,1] of angle from Y=-1 to Y=+1.
+        //     <1 0 0> yields <0.50 0.50>       <-1  0  0> yields <0.00 0.50>
+        //     <0 1 0> yields <0.50 1.00>       < 0 -1  0> yields <0.50 0.00>
+        //     <0 0 1> yields <0.25 0.50>       < 0  0 -1> yields <0.75 0.50>
+
+        let theta = (-lugar.y()).acos();
+        let phi = (-lugar.z()).atan2(lugar.x()) + std::f64::consts::PI;
+
+        (phi / (2.0 * phi), theta / phi)
     }
 }
 
@@ -90,10 +104,14 @@ impl Golpeable for Esfera {
         // Normal de la superficie apuntando hacia afuera
         let normal_exterior = (lugar_golpe - lugar_actual) / self.radio; // Vec3::normalizar(&(lugar_golpe - lugar_actual)); lo mismo
 
+        let (textura_horizontal, textura_vertical) = Esfera::cordenada_textura(normal_exterior);
+
         Some(Golpe::new(
             lugar_golpe,
             normal_exterior,
             distancia,
+            textura_horizontal,
+            textura_vertical,
             rayo,
             Arc::clone(&self.material),
         ))

@@ -1,12 +1,12 @@
 #![allow(dead_code)]
 #[derive(Debug, Clone, Copy)]
-pub struct Imagen {
+pub struct Output {
     relacion_aspecto: f64,
     ancho: u32,
     alto: u32,
 }
 
-impl Imagen {
+impl Output {
     pub fn new(relacion_aspecto: f64, ancho: u32) -> Self {
         let mut img = Self {
             relacion_aspecto,

@@ -1,13 +1,28 @@
-use crate::{color::Color, golpe::Golpe, material::Material, rayo::Rayo, vec3::Vec3};
+use std::sync::Arc;
+
+use crate::{
+    color::Color,
+    golpe::Golpe,
+    material::Material,
+    rayo::Rayo,
+    textura::{self, Textura, color_solido::Color_solido},
+    vec3::Vec3,
+};
 
 pub struct DifusoLambertiano {
-    color: Color,
+    textura: Arc<dyn Textura>,
 }
 
 impl DifusoLambertiano {
     #[inline]
-    pub fn new(color: Color) -> Self {
-        Self { color }
+    pub fn new_from_color(color: Color) -> Self {
+        Self {
+            textura: Arc::new(Color_solido::new(color)),
+        }
+    }
+
+    pub fn new(textura: Arc<dyn Textura>) -> Self {
+        Self { textura }
     }
 }
 
@@ -19,8 +34,16 @@ impl Material for DifusoLambertiano {
             direccion_dispersion = golpe.normal();
         }
 
-        let rayo_resultante = Rayo::new_con_tiempo(golpe.lugar(), direccion_dispersion, rayo_entrante.tiempo());
+        let rayo_resultante =
+            Rayo::new_con_tiempo(golpe.lugar(), direccion_dispersion, rayo_entrante.tiempo());
 
-        Some((rayo_resultante, self.color))
+        Some((
+            rayo_resultante,
+            self.textura.valor(
+                golpe.textura_horizontal(),
+                golpe.textura_vertical(),
+                &golpe.lugar(),
+            ),
+        ))
     }
 }
