@@ -1,16 +1,16 @@
 use crate::{color::Color, textura::Textura};
 
-pub struct Color_solido {
+pub struct ColorSolido {
     color: Color,
 }
 
-impl Color_solido {
+impl ColorSolido {
     pub fn new(color: Color) -> Self {
         Self { color }
     }
 }
 
-impl Textura for Color_solido {
+impl Textura for ColorSolido {
     fn valor(
         &self,
         _textura_horizontal: f64,

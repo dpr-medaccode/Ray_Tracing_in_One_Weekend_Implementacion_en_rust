@@ -5,7 +5,7 @@ use crate::{
     golpe::Golpe,
     material::Material,
     rayo::Rayo,
-    textura::{self, Textura, color_solido::Color_solido},
+    textura::{Textura, color_solido::ColorSolido},
     vec3::Vec3,
 };
 
@@ -17,7 +17,7 @@ impl DifusoLambertiano {
     #[inline]
     pub fn new_from_color(color: Color) -> Self {
         Self {
-            textura: Arc::new(Color_solido::new(color)),
+            textura: Arc::new(ColorSolido::new(color)),
         }
     }
 

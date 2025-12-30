@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::{
     color::Color,
-    textura::{Textura, color_solido::Color_solido},
+    textura::{Textura, color_solido::ColorSolido},
 };
 
 pub struct Ajedrez {
@@ -24,8 +24,8 @@ impl Ajedrez {
    pub fn new_from_colores(escala: f64, on: Color, off: Color) -> Self {
         Self {
             escala_cuadro: 1.0 / escala,
-            textura_on: Arc::new(Color_solido::new(on)),
-            textura_off: Arc::new(Color_solido::new(off)),
+            textura_on: Arc::new(ColorSolido::new(on)),
+            textura_off: Arc::new(ColorSolido::new(off)),
         }
     }
 }

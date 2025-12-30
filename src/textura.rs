@@ -1,5 +1,6 @@
 pub mod color_solido;
 pub mod ajedrez;
+pub mod textura_imagen;
 
 use crate::{color::Color, vec3::Point3};
 
