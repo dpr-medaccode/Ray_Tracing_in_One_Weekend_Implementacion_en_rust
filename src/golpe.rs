@@ -63,7 +63,7 @@ impl Golpe {
         &self.material
     }
 
-    fn set_cara_frontal(rayo: &Rayo, normal_exterior: &Vec3) -> (Vec3, bool) {
+   pub fn set_cara_frontal(rayo: &Rayo, normal_exterior: &Vec3) -> (Vec3, bool) {
         let cara_frontal = Vec3::punto(&rayo.direccion(), normal_exterior) < 0.0;
 
         let normal = if cara_frontal {

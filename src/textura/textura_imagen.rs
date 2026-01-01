@@ -1,18 +1,43 @@
+use image::{DynamicImage, GenericImageView, ImageReader, Pixel};
+
 use crate::{
-    imagen::{Imagen, pixel_to_color},
-    intervalo::Intervalo,
+    color::Color,
     textura::Textura,
 };
 
 pub struct TexturaImagen {
-    imagen: Imagen,
+    imagen: DynamicImage,
 }
 
 impl TexturaImagen {
     pub fn new(ruta: &str) -> Self {
-        Self {
-            imagen: Imagen::new(ruta),
-        }
+        let imagen = ImageReader::open(ruta)
+            .expect("should be a valid image path")
+            .decode()
+            .expect("should decode");
+
+        Self { imagen }
+    }
+
+    pub fn ancho(&self) -> u32 {
+        self.imagen.width()
+    }
+
+    pub fn alto(&self) -> u32 {
+        self.imagen.height()
+    }
+
+    pub fn pixel_from(&self, x: u32, y: u32) -> Color {
+        let clamped_x = u32::clamp(x, 0, self.ancho() - 1);
+        let calmped_y = u32::clamp(y, 0, self.alto() - 1);
+
+        let pixel = self.imagen.get_pixel(clamped_x, calmped_y).to_rgb();
+
+        let r = ((pixel.0[0] as f64) / 255.0).powf(2.2);
+        let g = ((pixel.0[1] as f64) / 255.0).powf(2.2);
+        let b = ((pixel.0[2] as f64) / 255.0).powf(2.2);
+
+        Color::new(r, g, b)
     }
 }
 
@@ -21,9 +46,9 @@ impl Textura for TexturaImagen {
         &self,
         textura_horizontal: f64,
         textura_vertical: f64,
-        lugar: &crate::vec3::Point3,
+        _lugar: &crate::vec3::Point3,
     ) -> crate::color::Color {
-        if self.imagen.alto() == 0 {
+        if self.ancho() == 0 {
             return crate::color::Color::new(0.0, 1.0, 1.0);
         }
 
@@ -32,10 +57,9 @@ impl Textura for TexturaImagen {
         //let u = Intervalo::new(0.0, 1.0).limitar(textura_horizontal);
         //let v = 1.0 - Intervalo::new(0.0, 1.0).limitar(textura_vertical);
 
-        let i = (u * (self.imagen.ancho() - 1) as f64) as i32;
-        let j = (v * (self.imagen.alto() - 1) as f64) as i32;
+        let i = (u * (self.ancho() - 1) as f64) as u32;
+        let j = (v * (self.alto() - 1) as f64) as u32;
 
-        let p = self.imagen.pixel_from(i, j);
-        pixel_to_color(p)
+        self.pixel_from(i, j)
     }
 }

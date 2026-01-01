@@ -5,7 +5,6 @@ mod camara;
 mod color;
 mod esfera;
 mod golpe;
-mod imagen;
 mod intervalo;
 mod material;
 mod nodo;
@@ -21,17 +20,32 @@ use crate::{
     golpe::lista_golpeable::ListaGolpeable,
     material::{dielectrico::Dielectrico, difuso_lambertiano::DifusoLambertiano, metal::Metal},
     textura::{
-        Textura, ajedrez::Ajedrez, color_solido::ColorSolido, textura_imagen::TexturaImagen,
+        Textura, ajedrez::Ajedrez, color_solido::ColorSolido, perlin::Perlin,
+        textura_imagen::TexturaImagen,
     },
     util::random_f64_entre,
     vec3::Vec3,
 };
 
-/*fn main() {
+fn main() {
     let mut mundo = ListaGolpeable::new();
 
+    mundo.push(Arc::new(Esfera::new_estatica(
+        Vec3::new(0.0, -1000.0, 0.0),
+        1000.0,
+        Arc::new(DifusoLambertiano::new(Arc::new(Perlin::new()))),
+    )));
+
+    mundo.push(Arc::new(Esfera::new_estatica(
+        Vec3::new(0.0, 2.0, 0.0),
+        2.0,
+        Arc::new(DifusoLambertiano::new(Arc::new(Perlin::new()))),
+    )));
+
+    
+
     // Suelo
-    let material_suelo: Arc<dyn material::Material> = Arc::new(DifusoLambertiano::new(Arc::new(
+    /*let material_suelo: Arc<dyn material::Material> = Arc::new(DifusoLambertiano::new(Arc::new(
         Ajedrez::new_from_colores(0.32, BLANCO, NEGRO),
     )));
 
@@ -128,14 +142,14 @@ use crate::{
     )));
 
     let material2: Arc<dyn material::Material> = Arc::new(DifusoLambertiano::new(Arc::new(
-        TexturaImagen::new("./public/tablero.jpeg"),
+        TexturaImagen::new("./public/jupiter.jpg"),
     )));
 
     mundo.push(Arc::new(Esfera::new_estatica(
         Vec3::new(4.0, 1.0, 0.0),
         1.0,
         material2,
-    )));
+    )));*/
 
     mundo = ListaGolpeable::from(vec![Arc::new(nodo::Nodo::new_from_lista(&mut mundo))]);
 
@@ -155,37 +169,6 @@ use crate::{
         hacia_arriba,
         0.6,
         10.0,
-    );
-
-    let f = File::create("out/imagen.ppm").unwrap();
-    let mut writer = BufWriter::new(f);
-
-    camara.render(&mut writer, true, true);
-}*/
-
-fn main() {
-    let mut mundo = ListaGolpeable::new();
-
-    let textura = Arc::new(TexturaImagen::new("./public/tierra.jpg"));
-    let material = Arc::new(DifusoLambertiano::new(textura));
-
-    mundo.push(Arc::new(Esfera::new_estatica(
-        Vec3::new(0.0, 0.0, -7.0),
-        1.0,
-        material,
-    )));
-
-    let imagen = Arc::new(output::Output::new(1.0, 400));
-
-    let camara = camara::Camara::new(
-        imagen,
-        mundo,
-        20.0,
-        Vec3::new(0.0, 0.0, 0.0),
-        Vec3::new(0.0, 0.0, -1.0),
-        Vec3::new(0.0, 1.0, 0.0),
-        0.0,
-        1.0,
     );
 
     let f = File::create("out/imagen.ppm").unwrap();

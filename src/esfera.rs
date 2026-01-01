@@ -59,7 +59,7 @@ impl Esfera {
         let theta = (-lugar.y()).acos();
         let phi = (-lugar.z()).atan2(lugar.x()) + std::f64::consts::PI;
 
-        (phi / (2.0 * phi), theta / phi)
+        (phi / (2.0 * std::f64::consts::PI), theta / std::f64::consts::PI)
     }
 }
 
@@ -101,12 +101,16 @@ impl Golpeable for Esfera {
 
         let lugar_golpe = rayo.en(distancia);
 
+    
+
+
         // Normal de la superficie apuntando hacia afuera
-        let normal_exterior = (lugar_golpe - lugar_actual) / self.radio; // Vec3::normalizar(&(lugar_golpe - lugar_actual)); lo mismo
+        let normal_exterior = Vec3::normalizar(&(lugar_golpe - lugar_actual));
+
 
         let (textura_horizontal, textura_vertical) = Esfera::cordenada_textura(normal_exterior);
 
-        Some(Golpe::new(
+        let golpe =  Golpe::new(
             lugar_golpe,
             normal_exterior,
             distancia,
@@ -114,6 +118,8 @@ impl Golpeable for Esfera {
             textura_vertical,
             rayo,
             Arc::clone(&self.material),
-        ))
+        );
+        
+        Some(golpe)
     }
 }

@@ -29,6 +29,11 @@ pub fn random_i32_entre(minimo: i32, maximo: i32) -> i32 {
     minimo + (maximo - minimo) * rng.random::<i32>()
 }
 
+pub fn random_usize_entre(min: usize, max: usize) -> usize {
+    let mut rng = rand::thread_rng();
+    rng.gen_range(min..=max)
+}
+
 pub fn random_entre_intervalo(intervalo: Intervalo) -> f64 {
     let mut rng = rand::rng();
     intervalo.minimo + (intervalo.maximo - intervalo.minimo) * rng.random::<f64>()
