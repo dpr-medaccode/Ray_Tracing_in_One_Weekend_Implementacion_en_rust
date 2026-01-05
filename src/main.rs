@@ -33,13 +33,13 @@ fn main() {
     mundo.push(Arc::new(Esfera::new_estatica(
         Vec3::new(0.0, -1000.0, 0.0),
         1000.0,
-        Arc::new(DifusoLambertiano::new(Arc::new(Perlin::new()))),
+        Arc::new(DifusoLambertiano::new(Arc::new(Perlin::new(4.0)))),
     )));
 
     mundo.push(Arc::new(Esfera::new_estatica(
         Vec3::new(0.0, 2.0, 0.0),
         2.0,
-        Arc::new(DifusoLambertiano::new(Arc::new(Perlin::new()))),
+        Arc::new(DifusoLambertiano::new(Arc::new(Perlin::new(4.0)))),
     )));
 
     

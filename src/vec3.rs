@@ -178,6 +178,14 @@ impl Mul<f64> for Vec3 {
     }
 }
 
+impl Mul<f64> for &Vec3 {
+    type Output = Vec3; 
+    fn mul(self, escalar: f64) -> Vec3 {
+        Vec3::new(self.x() * escalar, self.y() * escalar, self.z() * escalar)
+    }
+}
+
+
 impl Mul<Vec3> for Vec3 {
     type Output = Self;
     #[inline]
