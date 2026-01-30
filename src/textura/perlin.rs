@@ -81,7 +81,7 @@ impl Perlin {
         let mut lugar_temporal = lugar.clone();
         let mut peso = 1.0;
 
-        for i in 0..profundidad  {
+        for _i in 0..profundidad  {
 
             acumuldor += peso * self.ruido(&lugar_temporal);
 

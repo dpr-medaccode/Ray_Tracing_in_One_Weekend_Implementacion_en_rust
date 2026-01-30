@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use image::{DynamicImage, GenericImageView, ImageReader, Pixel};
 
 use crate::{

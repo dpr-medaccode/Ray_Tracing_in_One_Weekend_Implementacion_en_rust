@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use crate::{color::Color, golpe::Golpe, material::Material, rayo::Rayo, vec3::Vec3};
 
 pub struct Metal {
