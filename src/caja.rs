@@ -9,9 +9,16 @@ pub struct Caja {
 }
 
 impl Caja {
+    pub fn new(x: Intervalo, y: Intervalo, z: Intervalo) -> Self {
+        let mut caja = Caja { x, y, z };
 
-    pub fn new(a: Vec3, b: Vec3) -> Self {
-        Caja {
+        caja.expandir_minimos();
+
+        caja
+    }
+
+    pub fn new_from_vec3(a: Vec3, b: Vec3) -> Self {
+        let mut caja = Caja {
             x: if a.x() <= b.x() {
                 Intervalo::new(a.x(), b.x())
             } else {
@@ -27,7 +34,11 @@ impl Caja {
             } else {
                 Intervalo::new(b.z(), a.z())
             },
-        }
+        };
+
+        caja.expandir_minimos();
+
+        caja
     }
 
     pub fn new_from_cajas(a: Caja, b: Caja) -> Self {
@@ -38,11 +49,24 @@ impl Caja {
         }
     }
 
+    fn expandir_minimos(&mut self) {
+        let minimo = 0.0001;
+
+        if self.x.tamanno() < minimo {
+            self.x = self.x.expandir(minimo);
+        }
+        if self.y.tamanno() < minimo {
+            self.y = self.y.expandir(minimo);
+        }
+        if self.z.tamanno() < minimo {
+            self.z = self.z.expandir(minimo);
+        }
+    }
+
     pub fn rayo_golpea_caja(&self, rayo: &Rayo, intervalo: Intervalo) -> Option<Intervalo> {
         let mut t = intervalo;
 
         for eje in [Eje::X, Eje::Y, Eje::Z] {
-            
             let (eje_intervalo, origen, direccion) = match eje {
                 Eje::X => (self.x, rayo.origen().x(), rayo.direccion().x()),
                 Eje::Y => (self.y, rayo.origen().y(), rayo.direccion().y()),

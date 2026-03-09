@@ -26,7 +26,7 @@ impl Esfera {
             lugar: Rayo::new(lugar, Vec3::new(0.0, 0.0, 0.0)),
             radio,
             material,
-            caja: Caja::new(lugar - tamanno, lugar + tamanno),
+            caja: Caja::new_from_vec3(lugar - tamanno, lugar + tamanno),
         }
     }
 
@@ -39,8 +39,8 @@ impl Esfera {
         let tamanno = Vec3::new(radio, radio, radio);
         let lugar = Rayo::new(lugar1, lugar2 - lugar1);
 
-        let caja1 = Caja::new(lugar.en(0.0) - tamanno, lugar.en(0.0) + tamanno);
-        let caja2 = Caja::new(lugar.en(1.0) - tamanno, lugar.en(1.0) + tamanno);
+        let caja1 = Caja::new_from_vec3(lugar.en(0.0) - tamanno, lugar.en(0.0) + tamanno);
+        let caja2 = Caja::new_from_vec3(lugar.en(1.0) - tamanno, lugar.en(1.0) + tamanno);
 
         Self {
             lugar,
@@ -102,9 +102,6 @@ impl Golpeable for Esfera {
         }
 
         let lugar_golpe = rayo.en(distancia);
-
-    
-
 
         // Normal de la superficie apuntando hacia afuera
         let normal_exterior = Vec3::normalizar(&(lugar_golpe - lugar_actual));

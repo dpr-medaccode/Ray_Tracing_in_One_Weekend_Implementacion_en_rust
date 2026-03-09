@@ -3,6 +3,7 @@ use std::{fs::File, io::BufWriter, sync::Arc};
 mod caja;
 mod camara;
 mod color;
+mod cuadrilatero;
 mod esfera;
 mod golpe;
 mod intervalo;
@@ -15,22 +16,16 @@ mod util;
 mod vec3;
 
 use crate::{
-    color::{BLANCO, NEGRO},
-    esfera::Esfera,
-    golpe::lista_golpeable::ListaGolpeable,
-    material::{dielectrico::Dielectrico, difuso_lambertiano::DifusoLambertiano, metal::Metal},
-    textura::{
+    color::{BLANCO, NEGRO}, cuadrilatero::Cuadrilatero, esfera::Esfera, golpe::lista_golpeable::ListaGolpeable, material::{dielectrico::Dielectrico, difuso_lambertiano::DifusoLambertiano, metal::Metal}, textura::{
         Textura, ajedrez::Ajedrez, color_solido::ColorSolido, perlin::Perlin,
         textura_imagen::TexturaImagen,
-    },
-    util::random_f64_entre,
-    vec3::Vec3,
+    }, util::random_f64_entre, vec3::Vec3
 };
 
 fn main() {
     let mut mundo = ListaGolpeable::new();
 
-    mundo.push(Arc::new(Esfera::new_estatica(
+    /*mundo.push(Arc::new(Esfera::new_estatica(
         Vec3::new(0.0, -1000.0, 0.0),
         1000.0,
         Arc::new(DifusoLambertiano::new(Arc::new(Perlin::new(4.0)))),
@@ -40,10 +35,44 @@ fn main() {
         Vec3::new(0.0, 2.0, 0.0),
         2.0,
         Arc::new(DifusoLambertiano::new(Arc::new(Perlin::new(4.0)))),
+    )));*/
+
+    let rojo_izquierda = Arc::new(DifusoLambertiano::new_from_color(Vec3::new(1.0, 0.2, 0.2)));
+    let perlin_fondo = Arc::new(DifusoLambertiano::new(Arc::new(Perlin::new(4.0))));
+    let azul_derecha = Arc::new(DifusoLambertiano::new_from_color(Vec3::new(0.2, 0.2, 1.0)));
+    let naranja_arriba = Arc::new(DifusoLambertiano::new_from_color(Vec3::new(1.0, 0.5, 0.0)));
+    let verde_abajo = Arc::new(DifusoLambertiano::new_from_color(Vec3::new(0.2, 0.8, 0.8)));
+
+    mundo.push(Arc::new(Cuadrilatero::new(
+        Vec3::new(-3.0, -2.0,  5.0),
+        Vec3::new( 0.0,  0.0, -4.0),
+        Vec3::new( 0.0,  4.0,  0.0),
+        rojo_izquierda,
     )));
-
-    
-
+    mundo.push(Arc::new(Cuadrilatero::new(
+        Vec3::new(-2.0, -2.0,  0.0),
+        Vec3::new( 4.0,  0.0,  0.0),
+        Vec3::new( 0.0,  4.0,  0.0),
+        perlin_fondo,
+    )));
+    mundo.push(Arc::new(Cuadrilatero::new(
+        Vec3::new( 3.0, -2.0,  1.0),
+        Vec3::new( 0.0,  0.0,  4.0),
+        Vec3::new( 0.0,  4.0,  0.0),
+        azul_derecha,
+    )));
+    mundo.push(Arc::new(Cuadrilatero::new(
+        Vec3::new(-2.0,  3.0,  1.0),
+        Vec3::new( 4.0,  0.0,  0.0),
+        Vec3::new( 0.0,  0.0,  4.0),
+        naranja_arriba,
+    )));
+    mundo.push(Arc::new(Cuadrilatero::new(
+        Vec3::new(-2.0, -3.0,  5.0),
+        Vec3::new( 4.0,  0.0,  0.0),
+        Vec3::new( 0.0,  0.0, -4.0),
+        verde_abajo,
+    )));
     // Suelo
     /*let material_suelo: Arc<dyn material::Material> = Arc::new(DifusoLambertiano::new(Arc::new(
         Ajedrez::new_from_colores(0.32, BLANCO, NEGRO),
@@ -153,23 +182,23 @@ fn main() {
 
     mundo = ListaGolpeable::from(vec![Arc::new(nodo::Nodo::new_from_lista(&mut mundo))]);
 
-    // Cámara
-    let de_donde_mira = Vec3::new(13.0, 2.0, 3.0);
+    let de_donde_mira  = Vec3::new(0.0, 0.0, 9.0);
     let hacia_donde_mira = Vec3::new(0.0, 0.0, 0.0);
-    let hacia_arriba = Vec3::new(0.0, 1.0, 0.0);
+    let hacia_arriba   = Vec3::new(0.0, 1.0, 0.0);
 
-    let imagen = Arc::new(output::Output::new(16.0 / 9.0, 400));
+    let imagen = Arc::new(output::Output::new(1.0, 400)); // aspect_ratio 1.0
 
     let camara = camara::Camara::new(
         imagen,
         mundo,
-        20.0,
+        80.0,         
         de_donde_mira,
         hacia_donde_mira,
         hacia_arriba,
-        0.6,
+        0.0,          
         10.0,
     );
+
 
     let f = File::create("out/imagen.ppm").unwrap();
     let mut writer = BufWriter::new(f);
