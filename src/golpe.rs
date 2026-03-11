@@ -8,6 +8,9 @@ use crate::{
 
 pub mod golpeable;
 pub mod lista_golpeable;
+pub mod cuadrilatero;
+pub mod esfera;
+pub mod nodo;
 
 pub struct Golpe {
     lugar: Point3,

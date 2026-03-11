@@ -3,6 +3,7 @@ use std::sync::Arc;
 use crate::{
     caja::Caja,
     golpe::{Golpe, golpeable::Golpeable},
+    intervalo::Intervalo,
     material::Material,
     vec3::{Point3, Vec3},
 };
@@ -44,6 +45,26 @@ impl Cuadrilatero {
 
         Caja::new_from_cajas(diagonal1, diagonal2)
     }
+
+    fn es_interior(alpha: f64, beta: f64) -> Option<(f64, f64)> {
+        let intervalo = Intervalo::new(0.0, 1.0);
+
+        if !intervalo.contiene(alpha) || !intervalo.contiene(beta) {
+            return None;
+        }
+
+        // Disco
+        //if (alpha * alpha + beta * beta).sqrt() >= 1.0 {
+        //    return None;
+        //}
+
+        // Triángulo
+        //if !(alpha > 0.0 && beta > 0.0 && alpha + beta < 1.0) {
+        //   return None;
+        //}
+
+        Some((alpha, beta))
+    }
 }
 
 impl Golpeable for Cuadrilatero {
@@ -73,16 +94,14 @@ impl Golpeable for Cuadrilatero {
         let alpha = Vec3::punto(&self.w, &Vec3::cruz(&p, &self.v));
         let beta = Vec3::punto(&self.w, &Vec3::cruz(&self.u, &p));
 
-        if alpha < 0.0 || alpha > 1.0 || beta < 0.0 || beta > 1.0 {
-            return None;
-        }
+        let (tex_u, tex_v) = Cuadrilatero::es_interior(alpha, beta)?;
 
         Some(Golpe::new(
             lugar,
             self.normal,
             t,
-            alpha,
-            beta,
+            tex_u,
+            tex_v,
             rayo,
             Arc::clone(&self.material),
         ))
