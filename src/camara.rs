@@ -9,7 +9,7 @@ use rand::Rng;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::{
-    color::{color_rayo, escribir_color},
+    color::{Color, color_rayo, escribir_color},
     golpe::lista_golpeable::ListaGolpeable,
     output::Output,
     rayo::Rayo,
@@ -39,6 +39,7 @@ pub struct Camara {
     disco_desenfoque_v: Vec3,
 
     angulo_desenfoque: f64,
+    fondo: Color
 }
 
 impl Camara {
@@ -51,6 +52,7 @@ impl Camara {
         hacia_arriba: Vec3,
         angulo_desenfoque: f64,
         distancia_foco: f64,
+        fondo: Color
     ) -> Self {
         // Convertir FOV a radianes
         let theta = fov_vertical.to_radians();
@@ -93,10 +95,10 @@ impl Camara {
             delta_pixel_x,
             delta_pixel_y,
             pixel_00_lugar,
-            //fov_vertical,
             disco_desenfoque_u,
             disco_desenfoque_v,
             angulo_desenfoque,
+            fondo
         }
     }
 
@@ -167,7 +169,7 @@ impl Camara {
 
                     for _ in 0..MUESTRA_POR_PIXEL {
                         let rayo = self.rayo_por_pixel(i, j);
-                        pixel_color = pixel_color + color_rayo(&rayo, &self.mundo, PROFUNDIDAD);
+                        pixel_color = pixel_color + color_rayo(&rayo, &self.mundo, PROFUNDIDAD, self.fondo);
                     }
 
                     pixel_color = pixel_color * ESCALA_PIXEL_MUESTRA;
@@ -193,7 +195,6 @@ impl Camara {
 
             writer.write_all(&buffer).unwrap();
 
-            // Opcional: eliminar archivo temporal
             std::fs::remove_file(&nombre_archivo).unwrap();
         }
 

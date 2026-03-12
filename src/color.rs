@@ -48,22 +48,26 @@ fn to_byte(v: f64) -> u8 {
     (256.0 * INTENSIDAD.limitar(v)) as u8
 }
 
-pub fn color_rayo(rayo: &Rayo, mundo: &dyn Golpeable, profundidad: i32) -> Color {
-    if let Some(golpe) = mundo.rayo_golpea(rayo, Intervalo::new(0.001, f64::INFINITY)) {
-        if profundidad <= 0 {
-            return NEGRO;
-        }
-
-        if let Some((dispersion, atenuacion)) = golpe.material().dispersion(rayo, &golpe) {
-            return atenuacion * color_rayo(&dispersion, mundo, profundidad - 1);
-        }
-
+pub fn color_rayo(rayo: &Rayo, mundo: &dyn Golpeable, profundidad: i32, fondo: Color) -> Color {
+    if profundidad <= 0 {
         return NEGRO;
     }
 
-    let unidad = Vec3::normalizar(&rayo.direccion());
-    let t = 0.5 * (unidad.y() + 1.0);
-    BLANCO * (1.0 - t) + CIELO * t
+    let Some(golpe) = mundo.rayo_golpea(rayo, Intervalo::new(0.001, f64::INFINITY)) else {
+        return fondo;
+    };
+
+    let luz = golpe.material().luz_emitida(
+        golpe.textura_horizontal(),
+        golpe.textura_vertical(),
+        &golpe.lugar(),
+    );
+
+    let Some((dispersion, atenuacion)) = golpe.material().dispersion(rayo, &golpe) else {
+        return luz;
+    };
+
+    luz + atenuacion * color_rayo(&dispersion, mundo, profundidad - 1, fondo)
 }
 
 pub fn mezclar_colores(color_1: &Color, color_2: &Color) -> Color {

@@ -23,7 +23,7 @@ impl DifusoLambertiano {
         }
     }
 
-    pub fn new(textura: Arc<dyn Textura>) -> Self {
+    pub fn new_from_textura(textura: Arc<dyn Textura>) -> Self {
         Self { textura }
     }
 }

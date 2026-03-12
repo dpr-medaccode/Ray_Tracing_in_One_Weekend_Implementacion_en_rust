@@ -13,9 +13,14 @@ mod util;
 mod vec3;
 
 use crate::{
-    color::{BLANCO, NEGRO},
-    golpe::{cuadrilatero::Cuadrilatero, esfera::Esfera, lista_golpeable::ListaGolpeable, nodo::Nodo},
-    material::{dielectrico::Dielectrico, difuso_lambertiano::DifusoLambertiano, metal::Metal},
+    color::{BLANCO, CIELO, NEGRO},
+    golpe::{
+        cuadrilatero::Cuadrilatero, esfera::Esfera, lista_golpeable::ListaGolpeable, nodo::Nodo,
+    },
+    material::{
+        Material, dielectrico::Dielectrico, difuso_lambertiano::DifusoLambertiano,
+        luz_difusa::LuzDifusa, metal::Metal,
+    },
     textura::{
         Textura, ajedrez::Ajedrez, color_solido::ColorSolido, perlin::Perlin,
         textura_imagen::TexturaImagen,
@@ -39,13 +44,14 @@ fn main() {
         Arc::new(DifusoLambertiano::new(Arc::new(Perlin::new(4.0)))),
     )));*/
 
+    /*
     let rojo_izquierda = Arc::new(DifusoLambertiano::new_from_color(Vec3::new(1.0, 0.2, 0.2)));
-    let perlin_fondo = Arc::new(DifusoLambertiano::new(Arc::new(Perlin::new(4.0))));
+    let perlin_fondo = Arc::new(DifusoLambertiano::new_from_textura(Arc::new(Perlin::new(4.0))));
     let azul_derecha = Arc::new(DifusoLambertiano::new_from_color(Vec3::new(0.2, 0.2, 1.0)));
     let naranja_arriba = Arc::new(DifusoLambertiano::new_from_color(Vec3::new(1.0, 0.5, 0.0)));
     let verde_abajo = Arc::new(DifusoLambertiano::new_from_color(Vec3::new(0.2, 0.8, 0.8)));
-
-    mundo.push(Arc::new(Cuadrilatero::new(
+    */
+    /* mundo.push(Arc::new(Cuadrilatero::new(
         Vec3::new(-3.0, -2.0, 5.0),
         Vec3::new(0.0, 0.0, -4.0),
         Vec3::new(0.0, 4.0, 0.0),
@@ -75,6 +81,8 @@ fn main() {
         Vec3::new(0.0, 0.0, -4.0),
         verde_abajo,
     )));
+
+    */
     // Suelo
     /*let material_suelo: Arc<dyn material::Material> = Arc::new(DifusoLambertiano::new(Arc::new(
         Ajedrez::new_from_colores(0.32, BLANCO, NEGRO),
@@ -182,6 +190,31 @@ fn main() {
         material2,
     )));*/
 
+    let perlin = Arc::new(DifusoLambertiano::new_from_textura(Arc::new(Perlin::new(
+        4.0,
+    ))));
+
+    mundo.push(Arc::new(Esfera::new_estatica(
+        Vec3::new(0.0, 2.0, 0.0),
+        2.0,
+        Arc::clone(&perlin) as Arc<dyn Material>,
+    )));
+
+    mundo.push(Arc::new(Esfera::new_estatica(
+        Vec3::new(0.0, -1000.0, 0.0),
+        1000.0,
+        Arc::clone(&perlin) as Arc<dyn Material>,
+    )));
+
+    let luz = Arc::new(LuzDifusa::new_from_color(Vec3::new(4.0, 4.0, 4.0)));
+
+    mundo.push(Arc::new(Cuadrilatero::new(
+        Vec3::new(3.0, 1.0, -2.0),
+        Vec3::new(2.0, 0.0, 0.0),
+        Vec3::new(0.0, 2.0, 0.0),
+        luz,
+    )));
+
     mundo = ListaGolpeable::from(vec![Arc::new(Nodo::new_from_lista(&mut mundo))]);
 
     let de_donde_mira = Vec3::new(0.0, 0.0, 9.0);
@@ -193,12 +226,13 @@ fn main() {
     let camara = camara::Camara::new(
         imagen,
         mundo,
-        80.0,
-        de_donde_mira,
-        hacia_donde_mira,
-        hacia_arriba,
+        20.0,
+        Vec3::new(26.0, 3.0, 6.0),
+        Vec3::new(0.0, 2.0, 0.0),
+        Vec3::new(0.0, 1.0, 0.0),
         0.0,
         10.0,
+        NEGRO,
     );
 
     let f = File::create("out/imagen.ppm").unwrap();
