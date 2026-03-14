@@ -1,20 +1,26 @@
 pub mod dielectrico;
 pub mod difuso_lambertiano;
-pub mod metal;
 pub mod luz_difusa;
+pub mod metal;
 
 use crate::{
     color::{Color, NEGRO},
     golpe::Golpe,
-    rayo::Rayo, vec3::Point3,
+    rayo::Rayo,
+    vec3::Point3,
 };
 
 pub trait Material: Send + Sync {
-    fn dispersion(&self, rayo_entrante: &Rayo, golpe: &Golpe) -> Option<(Rayo, Color)>{
+    fn dispersion(&self, _rayo_entrante: &Rayo, _golpe: &Golpe) -> Option<(Rayo, Color)> {
         None
     }
 
-    fn luz_emitida(&self, textura_horizontal: f64, textura_vertical: f64, lugar: &Point3) -> Color {
+    fn luz_emitida(
+        &self,
+        _textura_horizontal: f64,
+        _textura_vertical: f64,
+        _lugar: &Point3,
+    ) -> Color {
         NEGRO
     }
 }

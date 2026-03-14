@@ -102,6 +102,8 @@ impl Camara {
         }
     }
 
+   
+
     fn rayo_por_pixel(&self, i: u32, j: u32) -> Rayo {
         let compensacion = self.cuadrado_muestra();
 

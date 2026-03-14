@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::{
     caja::Caja,
-    golpe::{Golpe, golpeable::Golpeable},
+    golpe::{Golpe, golpeable::Golpeable, lista_golpeable::ListaGolpeable},
     intervalo::Intervalo,
     material::Material,
     vec3::{Point3, Vec3},
@@ -64,6 +64,53 @@ impl Cuadrilatero {
         //}
 
         Some((alpha, beta))
+    }
+
+    #[inline]
+    pub fn new_caja(a: Vec3, b: Vec3, material: Arc<dyn Material>, mundo: &mut ListaGolpeable) {
+        let min = Vec3::new(a.x().min(b.x()), a.y().min(b.y()), a.z().min(b.z()));
+        let max = Vec3::new(a.x().max(b.x()), a.y().max(b.y()), a.z().max(b.z()));
+
+        let dx = Vec3::new(max.x() - min.x(), 0.0, 0.0);
+        let dy = Vec3::new(0.0, max.y() - min.y(), 0.0);
+        let dz = Vec3::new(0.0, 0.0, max.z() - min.z());
+
+        mundo.push(Arc::new(Cuadrilatero::new(
+            Vec3::new(min.x(), min.y(), max.z()),
+            dx,
+            dy,
+            Arc::clone(&material),
+        ))); // frente
+        mundo.push(Arc::new(Cuadrilatero::new(
+            Vec3::new(max.x(), min.y(), max.z()),
+            -dz,
+            dy,
+            Arc::clone(&material),
+        ))); // derecha
+        mundo.push(Arc::new(Cuadrilatero::new(
+            Vec3::new(max.x(), min.y(), min.z()),
+            -dx,
+            dy,
+            Arc::clone(&material),
+        ))); // atrás
+        mundo.push(Arc::new(Cuadrilatero::new(
+            Vec3::new(min.x(), min.y(), min.z()),
+            dz,
+            dy,
+            Arc::clone(&material),
+        ))); // izquierda
+        mundo.push(Arc::new(Cuadrilatero::new(
+            Vec3::new(min.x(), max.y(), max.z()),
+            dx,
+            -dz,
+            Arc::clone(&material),
+        ))); // arriba
+        mundo.push(Arc::new(Cuadrilatero::new(
+            Vec3::new(min.x(), min.y(), min.z()),
+            dx,
+            dz,
+            Arc::clone(&material),
+        ))); // abajo
     }
 }
 

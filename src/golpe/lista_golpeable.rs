@@ -14,6 +14,7 @@ pub struct ListaGolpeable {
 }
 
 impl ListaGolpeable {
+    
     pub fn new() -> Self {
         Self {
             objetos: Vec::new(),
