@@ -3,6 +3,8 @@ pub mod cuadrilateros;
 pub mod final_1;
 pub mod luz;
 pub mod perlin;
+pub mod cornell_humo;
+pub mod final_2;
 
 // hacer sistema de escenas con lua
 

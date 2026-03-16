@@ -2,6 +2,7 @@ pub mod dielectrico;
 pub mod difuso_lambertiano;
 pub mod luz_difusa;
 pub mod metal;
+pub mod isotropico;
 
 use crate::{
     color::{Color, NEGRO},

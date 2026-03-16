@@ -17,10 +17,10 @@ use crate::{
     vec3::Vec3,
 };
 
-const PROFUNDIDAD: i32 = 50;
+/*const PROFUNDIDAD: i32 = 50;
 
 const MUESTRA_POR_PIXEL: i32 = 100; // anti-aliasing
-const ESCALA_PIXEL_MUESTRA: f64 = 1.0 / MUESTRA_POR_PIXEL as f64;
+const ESCALA_PIXEL_MUESTRA: f64 = 1.0 / MUESTRA_POR_PIXEL as f64; */
 
 pub struct Camara {
 
@@ -40,6 +40,10 @@ pub struct Camara {
 
     angulo_desenfoque: f64,
     fondo: Color,
+
+    profundidad: i32,
+    muestra_por_pixel: i32,
+    escala_pixel_muestra: f64
 }
 
 impl Camara {
@@ -53,6 +57,8 @@ impl Camara {
         angulo_desenfoque: f64,
         distancia_foco: f64,
         fondo: Color,
+        profundidad: i32,
+        muestra_por_pixel:i32
     ) -> Self {
         // Convertir FOV a radianes
         let theta = fov_vertical.to_radians();
@@ -88,6 +94,8 @@ impl Camara {
         let disco_desenfoque_u = derecha_u * radio_desenfoque;
         let disco_desenfoque_v = arriba_v * radio_desenfoque;
 
+        let escala_pixel_muestra =  1.0 / muestra_por_pixel as f64;
+
         Self {
             output: imagen,
             mundo,
@@ -99,6 +107,10 @@ impl Camara {
             disco_desenfoque_v,
             angulo_desenfoque,
             fondo,
+            profundidad,
+            muestra_por_pixel,
+            escala_pixel_muestra
+        
         }
     }
 
@@ -170,13 +182,13 @@ impl Camara {
                 for i in 0..ancho {
                     let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
 
-                    for _ in 0..MUESTRA_POR_PIXEL {
+                    for _ in 0..self.muestra_por_pixel {
                         let rayo = self.rayo_por_pixel(i, j);
                         pixel_color =
-                            pixel_color + color_rayo(&rayo, &self.mundo, PROFUNDIDAD, self.fondo);
+                            pixel_color + color_rayo(&rayo, &self.mundo, self.profundidad, self.fondo);
                     }
 
-                    pixel_color = pixel_color * ESCALA_PIXEL_MUESTRA;
+                    pixel_color = pixel_color * self.escala_pixel_muestra;
                     writer_bloque
                         .write_all(escribir_color(&pixel_color).as_bytes())
                         .unwrap();

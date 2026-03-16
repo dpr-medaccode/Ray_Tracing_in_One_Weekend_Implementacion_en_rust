@@ -13,6 +13,7 @@ pub mod esfera;
 pub mod nodo;
 pub mod trasladar;
 pub mod rotar_y;
+pub mod constante_media;
 
 pub struct Golpe {
     lugar: Point3,

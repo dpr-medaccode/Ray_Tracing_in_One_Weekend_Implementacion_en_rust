@@ -112,5 +112,7 @@ pub fn escena_final_1() -> Camara {
         0.6,
         10.0,
         ATARDECER,
+        50,
+        100
     )
 }

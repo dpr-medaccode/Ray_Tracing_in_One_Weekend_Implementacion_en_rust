@@ -61,5 +61,7 @@ pub fn escena_cuadrilateros() -> Camara {
         0.0,
         10.0,
         CIELO,
+        50,
+        100
     )
 }

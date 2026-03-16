@@ -53,6 +53,8 @@ pub fn escena_luz_1() -> Camara {
         0.0,
         10.0,
         NEGRO,
+        50,
+        100
     )
 }
 
@@ -102,5 +104,7 @@ pub fn escena_luz_2() -> Camara {
         0.0,
         10.0,
         NEGRO,
+        50,
+        100
     )
 }

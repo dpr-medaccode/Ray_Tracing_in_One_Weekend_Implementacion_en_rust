@@ -1,12 +1,6 @@
 use std::sync::Arc;
 
-use crate::{
-    caja::{self, Caja, Eje},
-    golpe::golpeable::Golpeable,
-    rayo::Rayo,
-    util::grados_a_radianes,
-    vec3::Vec3,
-};
+use crate::{caja::Caja, golpe::golpeable::Golpeable, util::grados_a_radianes, vec3::Vec3};
 
 pub struct RotarY {
     objeto: Arc<dyn Golpeable>,
