@@ -1,4 +1,6 @@
 #![allow(dead_code)]
+use std::ops::Add;
+
 use crate::{intervalo::Intervalo, rayo::Rayo, vec3::Vec3};
 
 #[derive(Debug, Clone, Copy)]
@@ -66,7 +68,7 @@ impl Caja {
     pub fn rayo_golpea_caja(&self, rayo: &Rayo, intervalo: Intervalo) -> Option<Intervalo> {
         let mut t = intervalo;
 
-        for eje in [Eje::X, Eje::Y, Eje::Z] {
+        for eje in Eje::new_set() {
             let (eje_intervalo, origen, direccion) = match eje {
                 Eje::X => (self.x, rayo.origen().x(), rayo.direccion().x()),
                 Eje::Y => (self.y, rayo.origen().y(), rayo.direccion().y()),
@@ -129,4 +131,35 @@ pub enum Eje {
     X,
     Y,
     Z,
+}
+impl Eje {
+
+    pub fn new_set() -> [Eje; 3]{
+
+        [Eje::X, Eje::Y, Eje::Z]
+        
+    }
+    
+}
+
+impl Add<Vec3> for Caja {
+
+    type Output = Caja;
+
+    fn add(self, desplazo: Vec3) -> Caja {
+        Caja {
+            x: self.x + desplazo.x(),
+            y: self.y + desplazo.y(),
+            z: self.z + desplazo.z(),
+        }
+    }
+}
+
+impl Add<Caja> for Vec3 {
+    type Output = Caja;
+
+    fn add(self, caja: Caja) -> Caja {
+        caja + self
+    }
+
 }

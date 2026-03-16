@@ -1,13 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
-    camara::Camara,
-    color::NEGRO,
-    escena::new_escena_mundo,
-    golpe::cuadrilatero::Cuadrilatero,
-    material::{Material, difuso_lambertiano::DifusoLambertiano, luz_difusa::LuzDifusa},
-    output::Output,
-    vec3::Vec3,
+    caja, camara::Camara, color::NEGRO, escena::new_escena_mundo, golpe::{cuadrilatero::Cuadrilatero, rotar_y::RotarY, trasladar::Trasladar}, material::{Material, difuso_lambertiano::DifusoLambertiano, luz_difusa::LuzDifusa}, output::Output, vec3::Vec3
 };
 
 pub fn escena_caja_cornell() -> Camara {
@@ -65,19 +59,24 @@ pub fn escena_caja_cornell() -> Camara {
             Arc::clone(&blanco) as Arc<dyn Material>,
         )));
 
-        Cuadrilatero::new_caja(
-            Vec3::new(130.0, 0.0, 65.0),
-            Vec3::new(295.0, 165.0, 230.0),
+        let caja1 = Cuadrilatero::new_cubo(
+            Vec3::new(0.0, 0.0, 0.0),
+            Vec3::new(165.0,330.0,165.0),
             Arc::clone(&blanco) as Arc<dyn Material>,
-            &mut mundo,
         );
+        let caja1 = RotarY::new(Arc::new(caja1), 15.0);
+        let caja1 = Trasladar::new(Arc::new(caja1), Vec3::new(265.0,0.0,295.0));
+        mundo.push(Arc::new(caja1));
 
-        Cuadrilatero::new_caja(
-            Vec3::new(265.0, 0.0, 295.0),
-            Vec3::new(430.0, 330.0, 460.0),
+        let caja2 = Cuadrilatero::new_cubo(
+            Vec3::new(0.0, 0.0, 0.0),
+            Vec3::new(165.0, 165.0, 165.0),
             Arc::clone(&blanco) as Arc<dyn Material>,
-            &mut mundo,
         );
+        let caja2 = RotarY::new(Arc::new(caja2), -18.0);
+        let caja2 = Trasladar::new(Arc::new(caja2) ,  Vec3::new(130.0,0.0,65.0));
+        mundo.push(Arc::new(caja2));
+    
 
         mundo
     });

@@ -1,3 +1,5 @@
+use std::ops::Add;
+
 #[derive(Debug, Clone, Copy)]
 
 pub struct Intervalo {
@@ -69,4 +71,29 @@ impl Intervalo {
             maximo: self.maximo + pading,
         };
     }
+}
+
+impl Add<f64> for Intervalo {
+
+    type Output = Intervalo;
+
+    fn add(self, desplazo: f64) -> Intervalo {
+
+        Intervalo { minimo: self.minimo + desplazo, 
+            maximo: self.maximo + desplazo }
+
+    }
+
+}
+
+impl Add<Intervalo> for f64 {
+
+    type Output = Intervalo;
+
+    fn add(self,intevalo : Intervalo) -> Intervalo {
+
+        intevalo + self
+
+    }
+    
 }

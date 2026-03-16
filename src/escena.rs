@@ -4,6 +4,8 @@ pub mod final_1;
 pub mod luz;
 pub mod perlin;
 
+// hacer sistema de escenas con lua
+
 use std::sync::Arc;
 
 use crate::golpe::{lista_golpeable::ListaGolpeable, nodo::Nodo};

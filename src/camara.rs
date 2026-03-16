@@ -5,6 +5,7 @@ use std::{
     time::Instant,
 };
 
+
 use rand::Rng;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
@@ -21,9 +22,8 @@ const PROFUNDIDAD: i32 = 50;
 const MUESTRA_POR_PIXEL: i32 = 100; // anti-aliasing
 const ESCALA_PIXEL_MUESTRA: f64 = 1.0 / MUESTRA_POR_PIXEL as f64;
 
-const NUMERO_DE_HILOS: u32 = 8;
-
 pub struct Camara {
+
     output: Arc<Output>,
     mundo: ListaGolpeable,
 
@@ -39,7 +39,7 @@ pub struct Camara {
     disco_desenfoque_v: Vec3,
 
     angulo_desenfoque: f64,
-    fondo: Color
+    fondo: Color,
 }
 
 impl Camara {
@@ -52,7 +52,7 @@ impl Camara {
         hacia_arriba: Vec3,
         angulo_desenfoque: f64,
         distancia_foco: f64,
-        fondo: Color
+        fondo: Color,
     ) -> Self {
         // Convertir FOV a radianes
         let theta = fov_vertical.to_radians();
@@ -98,11 +98,9 @@ impl Camara {
             disco_desenfoque_u,
             disco_desenfoque_v,
             angulo_desenfoque,
-            fondo
+            fondo,
         }
     }
-
-   
 
     fn rayo_por_pixel(&self, i: u32, j: u32) -> Rayo {
         let compensacion = self.cuadrado_muestra();
@@ -139,19 +137,22 @@ impl Camara {
     }
 
     pub fn render<W: Write>(&self, writer: &mut W, mostrar_lineas: bool, medir_tiempo: bool) {
+
+        let numero_de_hilos: u32 = num_cpus::get() as u32;
+
         let alto = self.output.alto();
         let ancho = self.output.ancho();
         let inicio_total = Instant::now();
-        let tamanno_chunk = alto / NUMERO_DE_HILOS;
+        let tamanno_chunk = alto / numero_de_hilos;
 
         writer
             .write_all(self.output.encabezado_imagen().as_bytes())
             .unwrap();
 
-        (0..NUMERO_DE_HILOS).into_par_iter().for_each(|id_bloque| {
+        (0..numero_de_hilos).into_par_iter().for_each(|id_bloque| {
             let inicio = id_bloque * tamanno_chunk;
 
-            let fin = if id_bloque == NUMERO_DE_HILOS - 1 {
+            let fin = if id_bloque == numero_de_hilos - 1 {
                 alto
             } else {
                 (id_bloque + 1) * tamanno_chunk
@@ -171,7 +172,8 @@ impl Camara {
 
                     for _ in 0..MUESTRA_POR_PIXEL {
                         let rayo = self.rayo_por_pixel(i, j);
-                        pixel_color = pixel_color + color_rayo(&rayo, &self.mundo, PROFUNDIDAD, self.fondo);
+                        pixel_color =
+                            pixel_color + color_rayo(&rayo, &self.mundo, PROFUNDIDAD, self.fondo);
                     }
 
                     pixel_color = pixel_color * ESCALA_PIXEL_MUESTRA;
@@ -186,7 +188,7 @@ impl Camara {
             }
         });
 
-        for id_bloque in 0..NUMERO_DE_HILOS {
+        for id_bloque in 0..numero_de_hilos {
             let nombre_archivo = format!("bloque_{}.temp", id_bloque);
 
             let mut archivo_bloque = File::open(&nombre_archivo).unwrap();
