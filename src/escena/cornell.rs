@@ -23,42 +23,42 @@ pub fn escena_caja_cornell() -> Camara {
         )));
         let luz = Arc::new(LuzDifusa::new_from_color(Vec3::new(15.0, 15.0, 15.0)));
 
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(555.0, 0.0, 0.0),
             Vec3::new(0.0, 555.0, 0.0),
             Vec3::new(0.0, 0.0, 555.0),
             verde,
         )));
 
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(0.0, 0.0, 0.0),
             Vec3::new(0.0, 555.0, 0.0),
             Vec3::new(0.0, 0.0, 555.0),
             rojo,
         )));
 
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(343.0, 554.0, 332.0),
             Vec3::new(-130.0, 0.0, 0.0),
             Vec3::new(0.0, 0.0, -105.0),
             luz,
         )));
 
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(0.0, 0.0, 0.0),
             Vec3::new(555.0, 0.0, 0.0),
             Vec3::new(0.0, 0.0, 555.0),
             Arc::clone(&blanco) as Arc<dyn Material>,
         )));
 
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(555.0, 555.0, 555.0),
             Vec3::new(-555.0, 0.0, 0.0),
             Vec3::new(0.0, 0.0, -555.0),
             Arc::clone(&blanco) as Arc<dyn Material>,
         )));
 
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(0.0, 0.0, 555.0),
             Vec3::new(555.0, 0.0, 0.0),
             Vec3::new(0.0, 555.0, 0.0),
@@ -72,7 +72,7 @@ pub fn escena_caja_cornell() -> Camara {
         );
         let caja1 = RotarY::new(Arc::new(caja1), 15.0);
         let caja1 = Trasladar::new(Arc::new(caja1), Vec3::new(265.0, 0.0, 295.0));
-        mundo.push(Arc::new(caja1));
+        mundo.push(Box::new(caja1));
 
         let caja2 = Cuadrilatero::new_cubo(
             Vec3::new(0.0, 0.0, 0.0),
@@ -81,7 +81,7 @@ pub fn escena_caja_cornell() -> Camara {
         );
         let caja2 = RotarY::new(Arc::new(caja2), -18.0);
         let caja2 = Trasladar::new(Arc::new(caja2), Vec3::new(130.0, 0.0, 65.0));
-        mundo.push(Arc::new(caja2));
+        mundo.push(Box::new(caja2));
 
         mundo
     });

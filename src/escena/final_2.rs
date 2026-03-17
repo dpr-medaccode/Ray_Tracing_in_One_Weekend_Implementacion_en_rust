@@ -40,13 +40,13 @@ pub fn escena_final_2() -> Camara {
                     Vec3::new(x1, y1, z1),
                     Arc::clone(&ground) as Arc<dyn Material>,
                 );
-                boxes1.push(Arc::new(caja));
+                boxes1.push(Box::new(caja));
             }
         }
 
-        let mut boxes1_bvh = Nodo::new_from_lista(&mut boxes1);
+        let boxes1_bvh = Nodo::new_from_lista(boxes1.objetos);
         
-        mundo.push(Arc::new(boxes1_bvh));
+        mundo.push(Box::new(boxes1_bvh));
 
         // --- Luz ---
         let light = Arc::new(LuzDifusa::new_from_color(Vec3::new(7.0, 7.0, 7.0)));
@@ -56,7 +56,7 @@ pub fn escena_final_2() -> Camara {
             Vec3::new(0.0, 0.0, 265.0),
             light,
         );
-        mundo.push(Arc::new(luz_cuad));
+        mundo.push(Box::new(luz_cuad));
 
         // --- Esferas principales ---
         let center1 = Vec3::new(400.0, 400.0, 200.0);
@@ -69,28 +69,34 @@ pub fn escena_final_2() -> Camara {
             Arc::clone(&sphere_material) as Arc<dyn Material>,
         );
 
-        mundo.push(Arc::new(sphere));
+        mundo.push(Box::new(sphere));
 
-        mundo.push(Arc::new(Esfera::new_estatica(
+        mundo.push(Box::new(Esfera::new_estatica(
             Vec3::new(260.0, 150.0, 45.0),
             50.0,
             Arc::new(Dielectrico::new(1.5)),
         )));
-        mundo.push(Arc::new(Esfera::new_estatica(
+        mundo.push(Box::new(Esfera::new_estatica(
             Vec3::new(0.0, 150.0, 145.0),
             50.0,
             Arc::new(Metal::new(Vec3::new(0.8, 0.8, 0.9), 1.0)),
         )));
 
         // --- Medios ---
-        let boundary1 = Arc::new(Esfera::new_estatica(
+        let boundary1 = Box::new(Esfera::new_estatica(
             Vec3::new(360.0, 150.0, 145.0),
             70.0,
             Arc::new(Dielectrico::new(1.5)),
         ));
-        mundo.push(Arc::clone(&boundary1) as Arc<dyn Golpeable>);
-        mundo.push(Arc::new(ConstanteMedia::new_from_color(
-            boundary1,
+
+        mundo.push(boundary1);
+
+        mundo.push(Box::new(ConstanteMedia::new_from_color(
+            Arc::new(Esfera::new_estatica(
+            Vec3::new(360.0, 150.0, 145.0),
+            70.0,
+            Arc::new(Dielectrico::new(1.5)),
+        )),
             0.2,
             Vec3::new(0.2, 0.4, 0.9),
         )));
@@ -100,7 +106,7 @@ pub fn escena_final_2() -> Camara {
             5000.0,
             Arc::new(Dielectrico::new(1.5)),
         ));
-        mundo.push(Arc::new(ConstanteMedia::new_from_color(
+        mundo.push(Box::new(ConstanteMedia::new_from_color(
             boundary2,
             0.0001,
             Vec3::new(1.0, 1.0, 1.0),
@@ -110,14 +116,14 @@ pub fn escena_final_2() -> Camara {
         let emat = Arc::new(DifusoLambertiano::new_from_textura(Arc::new(
             TexturaImagen::new("./public/tierra.jpg"),
         )));
-        mundo.push(Arc::new(Esfera::new_estatica(
+        mundo.push(Box::new(Esfera::new_estatica(
             Vec3::new(400.0, 200.0, 400.0),
             100.0,
             emat,
         )));
 
         let pertext = Arc::new(Perlin::new(0.2));
-        mundo.push(Arc::new(Esfera::new_estatica(
+        mundo.push(Box::new(Esfera::new_estatica(
             Vec3::new(220.0, 280.0, 300.0),
             80.0,
             Arc::new(DifusoLambertiano::new_from_textura(pertext)),
@@ -129,17 +135,17 @@ pub fn escena_final_2() -> Camara {
         )));
         for _ in 0..1000 {
             let pos = Vec3::random_entre(0.0, 165.0);
-            boxes2.push(Arc::new(Esfera::new_estatica(
+            boxes2.push(Box::new(Esfera::new_estatica(
                 pos,
                 10.0,
                 Arc::clone(&white) as Arc<dyn Material>,
             )));
         }
 
-        let bvh_boxes2 = Nodo::new_from_lista(&mut boxes2);
+        let bvh_boxes2 = Nodo::new_from_lista(boxes2.objetos);
         let bvh_rotated = RotarY::new(Arc::new(bvh_boxes2), 15.0);
         let bvh_translated = Trasladar::new(Arc::new(bvh_rotated), Vec3::new(-100.0, 270.0, 395.0));
-        mundo.push(Arc::new(bvh_translated));
+        mundo.push(Box::new(bvh_translated));
 
         
 

@@ -11,37 +11,37 @@ pub fn escena_cornell_humo() -> Camara {
         let luz = Arc::new(LuzDifusa::new_from_color(Vec3::new(7.0, 7.0, 7.0)));
 
         // Paredes
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(555.0, 0.0, 0.0),
             Vec3::new(0.0, 555.0, 0.0),
             Vec3::new(0.0, 0.0, 555.0),
             verde,
         )));
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(0.0, 0.0, 0.0),
             Vec3::new(0.0, 555.0, 0.0),
             Vec3::new(0.0, 0.0, 555.0),
             rojo,
         )));
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(113.0, 554.0, 127.0),
             Vec3::new(330.0, 0.0, 0.0),
             Vec3::new(0.0, 0.0, 305.0),
             luz,
         )));
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(0.0, 555.0, 0.0),
             Vec3::new(555.0, 0.0, 0.0),
             Vec3::new(0.0, 0.0, 555.0),
             Arc::clone(&blanco) as Arc<dyn Material>,
         )));
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(0.0, 0.0, 0.0),
             Vec3::new(555.0, 0.0, 0.0),
             Vec3::new(0.0, 0.0, 555.0),
             Arc::clone(&blanco) as Arc<dyn Material>,
         )));
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(0.0, 0.0, 555.0),
             Vec3::new(555.0, 0.0, 0.0),
             Vec3::new(0.0, 555.0, 0.0),
@@ -69,8 +69,8 @@ pub fn escena_cornell_humo() -> Camara {
         let humo1 = ConstanteMedia::new_from_color(Arc::new(caja1), 0.01, Vec3::new(0.0, 0.0, 0.0));
         let humo2 = ConstanteMedia::new_from_color(Arc::new(caja2), 0.01, Vec3::new(1.0, 1.0, 1.0));
 
-        mundo.push(Arc::new(humo1));
-        mundo.push(Arc::new(humo2));
+        mundo.push(Box::new(humo1));
+        mundo.push(Box::new(humo2));
 
         mundo
     });

@@ -22,7 +22,7 @@ pub fn escena_final_1() -> Camara {
             Arc::new(Ajedrez::new_from_colores(0.32, BLANCO, NEGRO)),
         ));
 
-        mundo.push(Arc::new(Esfera::new_estatica(
+        mundo.push(Box::new(Esfera::new_estatica(
             Vec3::new(0.0, -1000.0, 0.0),
             1000.0,
             Arc::clone(&material_suelo),
@@ -54,20 +54,20 @@ pub fn escena_final_1() -> Camara {
 
                         if rand::random::<f64>() < 0.5 {
                             let center2 = center + Vec3::new(0.0, random_f64_entre(0.0, 0.5), 0.0);
-                            mundo.push(Arc::new(Esfera::new_en_movimiento(
+                            mundo.push(Box::new(Esfera::new_en_movimiento(
                                 center, center2, 0.2, material,
                             )));
                         } else {
-                            mundo.push(Arc::new(Esfera::new_estatica(center, 0.2, material)));
+                            mundo.push(Box::new(Esfera::new_estatica(center, 0.2, material)));
                         }
                     } else if choose_mat < 0.95 {
                         let albedo = Vec3::random_entre(0.5, 1.0);
                         let fuzz = 1.0;
                         let material: Arc<dyn Material> = Arc::new(Metal::new(albedo, fuzz));
-                        mundo.push(Arc::new(Esfera::new_estatica(center, 0.2, material)));
+                        mundo.push(Box::new(Esfera::new_estatica(center, 0.2, material)));
                     } else {
                         let material: Arc<dyn Material> = Arc::new(Dielectrico::new(1.5));
-                        mundo.push(Arc::new(Esfera::new_estatica(center, 0.2, material)));
+                        mundo.push(Box::new(Esfera::new_estatica(center, 0.2, material)));
                     }
                 }
             }
@@ -76,7 +76,7 @@ pub fn escena_final_1() -> Camara {
         let material1: Arc<dyn Material> =
             Arc::new(DifusoLambertiano::new_from_color(Vec3::new(0.4, 0.2, 0.1)));
 
-        mundo.push(Arc::new(Esfera::new_estatica(
+        mundo.push(Box::new(Esfera::new_estatica(
             Vec3::new(0.0, 1.0, 0.0),
             1.0,
             material1,
@@ -84,7 +84,7 @@ pub fn escena_final_1() -> Camara {
 
         let material3: Arc<dyn Material> = Arc::new(Metal::new(Vec3::new(0.7, 0.6, 0.5), 0.5));
 
-        mundo.push(Arc::new(Esfera::new_estatica(
+        mundo.push(Box::new(Esfera::new_estatica(
             Vec3::new(-4.0, 1.0, 0.0),
             1.0,
             material3,
@@ -94,7 +94,7 @@ pub fn escena_final_1() -> Camara {
             TexturaImagen::new("./public/jupiter.jpg"),
         )));
 
-        mundo.push(Arc::new(Esfera::new_estatica(
+        mundo.push(Box::new(Esfera::new_estatica(
             Vec3::new(4.0, 1.0, 0.0),
             1.0,
             material2,

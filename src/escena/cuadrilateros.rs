@@ -13,35 +13,35 @@ pub fn escena_cuadrilateros() -> Camara {
         let naranja_arriba = Arc::new(DifusoLambertiano::new_from_color(Vec3::new(1.0, 0.5, 0.0)));
         let cian_abajo = Arc::new(DifusoLambertiano::new_from_color(Vec3::new(0.2, 0.8, 0.8)));
 
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(-3.0, -2.0, 5.0),
             Vec3::new(0.0, 0.0, -4.0),
             Vec3::new(0.0, 4.0, 0.0),
             rojo_izquierda,
         )));
 
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(-2.0, -2.0, 0.0),
             Vec3::new(4.0, 0.0, 0.0),
             Vec3::new(0.0, 4.0, 0.0),
             verde_fondo,
         )));
 
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(3.0, -2.0, 1.0),
             Vec3::new(0.0, 0.0, 4.0),
             Vec3::new(0.0, 4.0, 0.0),
             azul_derecha,
         )));
 
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(-2.0, 3.0, 1.0),
             Vec3::new(4.0, 0.0, 0.0),
             Vec3::new(0.0, 0.0, 4.0),
             naranja_arriba,
         )));
 
-        mundo.push(Arc::new(Cuadrilatero::new(
+        mundo.push(Box::new(Cuadrilatero::new(
             Vec3::new(-2.0, -3.0, 5.0),
             Vec3::new(4.0, 0.0, 0.0),
             Vec3::new(0.0, 0.0, -4.0),

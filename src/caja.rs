@@ -51,6 +51,7 @@ impl Caja {
         }
     }
 
+
     fn expandir_minimos(&mut self) {
         let minimo = 0.0001;
 

@@ -2,24 +2,25 @@ use std::cmp::Ordering;
 use std::sync::Arc;
 
 use crate::{
-    caja::{Caja, Eje},
+    caja::{self, Caja, Eje},
     golpe::{Golpe, golpeable::Golpeable, lista_golpeable::ListaGolpeable},
     intervalo::Intervalo,
     rayo::Rayo,
 };
 
 pub struct Nodo {
-    izquierda: Arc<dyn Golpeable>,
-    derecha: Arc<dyn Golpeable>,
+    izquierda: Box<dyn Golpeable>,
+    derecha: Option<Box<dyn Golpeable>>,
     caja: Caja,
 }
 
 impl Nodo {
-    pub fn new_from_lista(lista: &mut ListaGolpeable) -> Self {
-        Nodo::new(&mut lista.objetos(), 0, lista.objetos().len())
+    pub fn new_from_lista(mut objetos: Vec<Box<dyn Golpeable>>) -> Self {
+        let len = objetos.len();
+        Nodo::new(&mut objetos, 0, len)
     }
 
-    pub fn new(objetos: &mut Vec<Arc<dyn Golpeable>>, inicio: usize, fin: usize) -> Self {
+    pub fn new(objetos: &mut Vec<Box<dyn Golpeable>>, inicio: usize, fin: usize) -> Self {
         let mut caja = Caja::vacio();
 
         for i in inicio..fin {
@@ -36,41 +37,43 @@ impl Nodo {
 
         let tamanno = fin - inicio;
 
-        let izquierda: Arc<dyn Golpeable>;
-        let derecha: Arc<dyn Golpeable>;
+        let izquierda: Box<dyn Golpeable>;
+        let derecha: Option<Box<dyn Golpeable>>;
 
         match tamanno {
             1 => {
-                izquierda = objetos[inicio].clone();
-                derecha = objetos[inicio].clone();
+                //izquierda = objetos.remove(inicio);
+                //derecha = None;
             }
 
             2 => {
-                izquierda = objetos[inicio].clone();
-                derecha = objetos[inicio + 1].clone();
+               //izquierda = objetos.remove(inicio);
+               //derecha = Some(objetos.remove(inicio));
             }
-
             _ => {
                 objetos[inicio..fin].sort_by(comparador);
-
                 let mid = inicio + tamanno / 2;
-
-                izquierda = Arc::new(Nodo::new(objetos, inicio, mid));
-                derecha = Arc::new(Nodo::new(objetos, mid, fin));
+                izquierda = Box::new(Nodo::new(objetos, inicio, mid));
+                derecha = Some(Box::new(Nodo::new(objetos, mid, fin)));
             }
         }
 
         let caja_izq = izquierda.caja();
-        let caja_der = derecha.caja();
+
+        let caja = if let Some(ref d) = derecha {
+            Caja::new_from_cajas(caja_izq, d.caja())
+        } else {
+            caja_izq
+        };
 
         Nodo {
             izquierda,
             derecha,
-            caja: Caja::new_from_cajas(caja_izq, caja_der),
+            caja,
         }
     }
 
-    pub fn comparar_caja_x(a: &Arc<dyn Golpeable>, b: &Arc<dyn Golpeable>) -> Ordering {
+    pub fn comparar_caja_x(a: &Box<dyn Golpeable>, b: &Box<dyn Golpeable>) -> Ordering {
         a.caja()
             .x
             .minimo
@@ -78,7 +81,7 @@ impl Nodo {
             .unwrap_or(Ordering::Equal)
     }
 
-    pub fn comparar_caja_y(a: &Arc<dyn Golpeable>, b: &Arc<dyn Golpeable>) -> Ordering {
+    pub fn comparar_caja_y(a: &Box<dyn Golpeable>, b: &Box<dyn Golpeable>) -> Ordering {
         a.caja()
             .y
             .minimo
@@ -86,7 +89,7 @@ impl Nodo {
             .unwrap_or(Ordering::Equal)
     }
 
-    pub fn comparar_caja_z(a: &Arc<dyn Golpeable>, b: &Arc<dyn Golpeable>) -> Ordering {
+    pub fn comparar_caja_z(a: &Box<dyn Golpeable>, b: &Box<dyn Golpeable>) -> Ordering {
         a.caja()
             .z
             .minimo
@@ -101,7 +104,6 @@ impl Golpeable for Nodo {
     }
 
     fn rayo_golpea(&self, rayo: &Rayo, intervalo: Intervalo) -> Option<Golpe> {
-
         let intervalo = self.caja.rayo_golpea_caja(rayo, intervalo)?;
 
         let golpe_izq = self.izquierda.rayo_golpea(rayo, intervalo);
@@ -112,7 +114,11 @@ impl Golpeable for Nodo {
             intervalo
         };
 
-        let golpe_der = self.derecha.rayo_golpea(rayo, nuevo_intervalo);
+        let golpe_der = if let Some(ref derecha) = self.derecha {
+            derecha.rayo_golpea(rayo, nuevo_intervalo)
+        } else {
+            None
+        };
 
         golpe_der.or(golpe_izq)
     }

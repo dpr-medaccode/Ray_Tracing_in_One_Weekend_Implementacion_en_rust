@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
-    color::{self, Color},
+    color::{ Color},
     golpe::{Golpe, golpeable::Golpeable},
     intervalo::Intervalo,
     material::{Material, isotropico::Isotropico},

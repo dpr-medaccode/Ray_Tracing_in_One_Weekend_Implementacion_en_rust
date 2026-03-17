@@ -1,6 +1,6 @@
 use std::{fs::File, io::BufWriter};
 
-use crate::escena::final_2::escena_final_2;
+use crate::escena::{cornell::escena_caja_cornell};
 
 mod caja;
 mod camara;
@@ -16,10 +16,12 @@ mod util;
 mod vec3;
 
 fn main() {
-    let camara = escena_final_2();
+
+    let camara = escena_caja_cornell();
 
     let f = File::create("out/imagen.ppm").unwrap();
     let mut writer = BufWriter::new(f);
 
     camara.render(&mut writer, true, true);
+    
 }

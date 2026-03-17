@@ -1,5 +1,4 @@
 #![allow(dead_code)]
-use std::sync::Arc;
 
 use crate::{
     caja::Caja,
@@ -9,12 +8,11 @@ use crate::{
 };
 
 pub struct ListaGolpeable {
-    objetos: Vec<Arc<dyn Golpeable>>,
+  pub objetos: Vec<Box<dyn Golpeable>>,
     caja: Caja,
 }
 
 impl ListaGolpeable {
-    
     pub fn new() -> Self {
         Self {
             objetos: Vec::new(),
@@ -22,13 +20,15 @@ impl ListaGolpeable {
         }
     }
 
-    pub fn objetos(&self) -> Vec<Arc<dyn Golpeable>>{
-
-        self.objetos.clone()
-
+    pub fn objetos(&self) -> &Vec<Box<dyn Golpeable>> {
+        &self.objetos
     }
 
-    pub fn from(lista: Vec<Arc<dyn Golpeable>>) -> Self {
+    /*pub fn objetos_mut(&mut self) -> &mut Vec<Arc<dyn Golpeable>> {
+        &mut self.objetos
+    }*/
+
+    pub fn from(lista: Vec<Box<dyn Golpeable>>) -> Self {
         let mut lista_golpeable = Self {
             objetos: Vec::new(),
             caja: Caja::vacio(),
@@ -46,7 +46,7 @@ impl ListaGolpeable {
         self.caja = Caja::vacio();
     }
 
-    pub fn push(&mut self, obj: Arc<dyn Golpeable>) {
+    pub fn push(&mut self, obj: Box<dyn Golpeable>) {
         self.caja = Caja::new_from_cajas(self.caja, obj.caja());
         self.objetos.push(obj);
     }

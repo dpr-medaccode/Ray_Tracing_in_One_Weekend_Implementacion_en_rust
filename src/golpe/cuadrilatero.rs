@@ -78,37 +78,38 @@ impl Cuadrilatero {
         let dy = Vec3::new(0.0, max.y() - min.y(), 0.0);
         let dz = Vec3::new(0.0, 0.0, max.z() - min.z());
 
-        cubo.push(Arc::new(Cuadrilatero::new(
+        cubo.push(Box::new(Cuadrilatero::new(
             Vec3::new(min.x(), min.y(), max.z()),
             dx,
             dy,
             Arc::clone(&material),
         ))); // frente
-        cubo.push(Arc::new(Cuadrilatero::new(
+
+        cubo.push(Box::new(Cuadrilatero::new(
             Vec3::new(max.x(), min.y(), max.z()),
             -dz,
             dy,
             Arc::clone(&material),
         ))); // derecha
-        cubo.push(Arc::new(Cuadrilatero::new(
+        cubo.push(Box::new(Cuadrilatero::new(
             Vec3::new(max.x(), min.y(), min.z()),
             -dx,
             dy,
             Arc::clone(&material),
         ))); // atrás
-        cubo.push(Arc::new(Cuadrilatero::new(
+        cubo.push(Box::new(Cuadrilatero::new(
             Vec3::new(min.x(), min.y(), min.z()),
             dz,
             dy,
             Arc::clone(&material),
         ))); // izquierda
-        cubo.push(Arc::new(Cuadrilatero::new(
+        cubo.push(Box::new(Cuadrilatero::new(
             Vec3::new(min.x(), max.y(), max.z()),
             dx,
             -dz,
             Arc::clone(&material),
         ))); // arriba
-        cubo.push(Arc::new(Cuadrilatero::new(
+        cubo.push(Box::new(Cuadrilatero::new(
             Vec3::new(min.x(), min.y(), min.z()),
             dx,
             dz,

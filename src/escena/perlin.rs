@@ -17,13 +17,13 @@ pub fn escena_perlin() -> Camara {
             4.0,
         ))));
 
-        mundo.push(Arc::new(Esfera::new_estatica(
+        mundo.push(Box::new(Esfera::new_estatica(
             Vec3::new(0.0, -1000.0, 0.0),
             1000.0,
             Arc::clone(&perlin) as Arc<dyn Material>,
         )));
 
-        mundo.push(Arc::new(Esfera::new_estatica(
+        mundo.push(Box::new(Esfera::new_estatica(
             Vec3::new(0.0, 2.0, 0.0),
             2.0,
             Arc::clone(&perlin) as Arc<dyn Material>,
