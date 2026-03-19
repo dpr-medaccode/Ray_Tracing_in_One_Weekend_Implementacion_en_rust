@@ -17,17 +17,17 @@ pub struct Nodo {
 impl Nodo {
     pub fn new_from_lista(mut objetos: Vec<Box<dyn Golpeable>>) -> Self {
         let len = objetos.len();
-        Nodo::new(&mut objetos, 0, len)
+        Nodo::new(&mut objetos /* , 0, len*/)
     }
 
-    pub fn new(objetos: &mut Vec<Box<dyn Golpeable>>, inicio: usize, fin: usize) -> Self {
-        let mut caja = Caja::vacio();
+    pub fn new(objetos: &mut Vec<Box<dyn Golpeable>> /*, inicio: usize, fin: usize*/) -> Self {
+        let mut caja_total = Caja::vacio();
 
-        for i in inicio..fin {
-            caja = Caja::new_from_cajas(caja, objetos[i].caja())
+        for o in objetos.iter() {
+            caja_total = Caja::new_from_cajas(caja_total, o.caja());
         }
 
-        let eje = caja.eje_mas_largo();
+        let eje = caja_total.eje_mas_largo();
 
         let comparador = match eje {
             Eje::X => Nodo::comparar_caja_x,
@@ -35,36 +35,38 @@ impl Nodo {
             Eje::Z => Nodo::comparar_caja_z,
         };
 
-        let tamanno = fin - inicio;
+        let tamanno = objetos.len();
 
         let izquierda: Box<dyn Golpeable>;
         let derecha: Option<Box<dyn Golpeable>>;
+        let caja: Caja;
 
         match tamanno {
+            0 => panic!("Nodo::new llamado con lista vacía"),
+
             1 => {
-                //izquierda = objetos.remove(inicio);
-                //derecha = None;
+                izquierda = objetos.remove(0);
+                derecha = None;
+                caja = izquierda.caja();
             }
 
             2 => {
-               //izquierda = objetos.remove(inicio);
-               //derecha = Some(objetos.remove(inicio));
+                objetos.sort_by(comparador);
+                 derecha = Some(objetos.remove(1));
+                izquierda = objetos.remove(0);
+                caja = Caja::new_from_cajas(izquierda.caja(), derecha.as_ref().unwrap().caja());
             }
             _ => {
-                objetos[inicio..fin].sort_by(comparador);
-                let mid = inicio + tamanno / 2;
-                izquierda = Box::new(Nodo::new(objetos, inicio, mid));
-                derecha = Some(Box::new(Nodo::new(objetos, mid, fin)));
+                objetos.sort_by(comparador);
+                let mid = tamanno / 2;
+
+                let mut derecha_vec = objetos.split_off(mid);
+
+                izquierda = Box::new(Nodo::new(objetos));
+                derecha = Some(Box::new(Nodo::new(&mut derecha_vec)));
+                caja = Caja::new_from_cajas(izquierda.caja(), derecha.as_ref().unwrap().caja());
             }
         }
-
-        let caja_izq = izquierda.caja();
-
-        let caja = if let Some(ref d) = derecha {
-            Caja::new_from_cajas(caja_izq, d.caja())
-        } else {
-            caja_izq
-        };
 
         Nodo {
             izquierda,
