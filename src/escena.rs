@@ -8,13 +8,13 @@ pub mod perlin;
 
 // hacer sistema de escenas con lua
 
-use crate::golpe::{lista_golpeable::ListaGolpeable, nodo::Nodo};
+use crate::golpe::{lista_golpeable::ListaGolpeable, nodo::Nodo, objeto::Objeto};
 
 pub fn new_escena_mundo(escena: impl Fn(ListaGolpeable) -> ListaGolpeable) -> ListaGolpeable {
     let mut mundo = escena(ListaGolpeable::new());
 
-    let objetos = std::mem::take(&mut mundo.objetos);
+    let mut objetos = std::mem::take(&mut mundo.objetos);
 
-    ListaGolpeable::from(vec![Box::new(Nodo::new_from_lista(objetos))])
+    ListaGolpeable::from(vec![Box::new(Objeto::Nodo(Nodo::new(&mut objetos)))])
 
 }

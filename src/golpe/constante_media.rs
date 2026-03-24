@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use crate::{
-    color::{ Color},
-    golpe::{Golpe, golpeable::Golpeable},
+    color::Color,
+    golpe::{Golpe, golpeable::Golpeable, objeto::Objeto},
     intervalo::Intervalo,
     material::{Material, isotropico::Isotropico},
     rayo::Rayo,
@@ -12,7 +12,7 @@ use crate::{
 };
 
 pub struct ConstanteMedia {
-    limite: Arc<dyn Golpeable>,
+    limite: Box<Objeto>,
 
     densidad_invertida_negativa: f64,
 
@@ -21,7 +21,7 @@ pub struct ConstanteMedia {
 
 impl ConstanteMedia {
     pub fn new_from_textura(
-        limite: Arc<dyn Golpeable>,
+        limite: Box<Objeto>,
         densidad: f64,
         textura: Arc<dyn Textura>,
     ) -> Self {
@@ -34,7 +34,7 @@ impl ConstanteMedia {
         }
     }
 
-    pub fn new_from_color(limite: Arc<dyn Golpeable>, densidad: f64, color: Color) -> Self {
+    pub fn new_from_color(limite: Box<Objeto>, densidad: f64, color: Color) -> Self {
         let densidad_invertida_negativa = -1.0 / densidad;
 
         ConstanteMedia {

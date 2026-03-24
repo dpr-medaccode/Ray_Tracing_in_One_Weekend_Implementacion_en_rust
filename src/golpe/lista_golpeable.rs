@@ -2,13 +2,13 @@
 
 use crate::{
     caja::Caja,
-    golpe::{Golpe, golpeable::Golpeable},
+    golpe::{Golpe, golpeable::Golpeable, objeto::Objeto},
     intervalo::Intervalo,
     rayo::Rayo,
 };
 
 pub struct ListaGolpeable {
-  pub objetos: Vec<Box<dyn Golpeable>>,
+  pub objetos: Vec<Box<Objeto>>,
     caja: Caja,
 }
 
@@ -20,7 +20,7 @@ impl ListaGolpeable {
         }
     }
 
-    pub fn objetos(&self) -> &Vec<Box<dyn Golpeable>> {
+    pub fn objetos(&self) -> &Vec<Box<Objeto>> {
         &self.objetos
     }
 
@@ -28,7 +28,7 @@ impl ListaGolpeable {
         &mut self.objetos
     }*/
 
-    pub fn from(lista: Vec<Box<dyn Golpeable>>) -> Self {
+    pub fn from(lista: Vec<Box<Objeto>>) -> Self {
         let mut lista_golpeable = Self {
             objetos: Vec::new(),
             caja: Caja::vacio(),
@@ -46,7 +46,7 @@ impl ListaGolpeable {
         self.caja = Caja::vacio();
     }
 
-    pub fn push(&mut self, obj: Box<dyn Golpeable>) {
+    pub fn push(&mut self, obj: Box<Objeto>) { // Box<Objeto> por Box<dny Golpeable>
         self.caja = Caja::new_from_cajas(self.caja, obj.caja());
         self.objetos.push(obj);
     }

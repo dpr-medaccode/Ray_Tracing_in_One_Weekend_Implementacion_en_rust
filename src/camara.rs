@@ -11,7 +11,7 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::{
     color::{Color, color_rayo, escribir_color},
-    golpe::lista_golpeable::ListaGolpeable,
+    golpe::{lista_golpeable::ListaGolpeable, objeto::Objeto},
     output::Output,
     rayo::Rayo,
     vec3::Vec3,
@@ -25,7 +25,7 @@ const ESCALA_PIXEL_MUESTRA: f64 = 1.0 / MUESTRA_POR_PIXEL as f64; */
 pub struct Camara {
 
     output: Arc<Output>,
-    mundo: ListaGolpeable,
+    mundo: Objeto,
 
     origen: Vec3,
 
@@ -49,7 +49,7 @@ pub struct Camara {
 impl Camara {
     pub fn new(
         imagen: Arc<Output>,
-        mundo: ListaGolpeable,
+        mundo: Objeto,
         fov_vertical: f64,
         de_donde_mira: Vec3,
         hacia_donde_mira: Vec3,

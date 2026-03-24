@@ -4,10 +4,8 @@ use crate::{
     camara::Camara,
     color::NEGRO,
     escena::new_escena_mundo,
-    golpe::{cuadrilatero::Cuadrilatero, esfera::Esfera},
-    material::{
-        Material, difuso_lambertiano::DifusoLambertiano, luz_difusa::LuzDifusa,
-    },
+    golpe::{cuadrilatero::Cuadrilatero, esfera::Esfera, objeto::Objeto},
+    material::{Material, difuso_lambertiano::DifusoLambertiano, luz_difusa::LuzDifusa},
     output::Output,
     textura::perlin::Perlin,
     vec3::Vec3,
@@ -19,33 +17,33 @@ pub fn escena_luz_1() -> Camara {
             4.0,
         ))));
 
-        mundo.push(Box::new(Esfera::new_estatica(
+        mundo.push(Box::new(Objeto::Esfera(Esfera::new_estatica(
             Vec3::new(0.0, 2.0, 0.0),
             2.0,
             Arc::clone(&perlin) as Arc<dyn Material>,
-        )));
+        ))));
 
-        mundo.push(Box::new(Esfera::new_estatica(
+        mundo.push(Box::new(Objeto::Esfera(Esfera::new_estatica(
             Vec3::new(0.0, -1000.0, 0.0),
             1000.0,
             Arc::clone(&perlin) as Arc<dyn Material>,
-        )));
+        ))));
 
         let luz = Arc::new(LuzDifusa::new_from_color(Vec3::new(4.0, 4.0, 4.0)));
 
-        mundo.push(Box::new(Cuadrilatero::new(
+        mundo.push(Box::new(Objeto::Cuadrilatero(Cuadrilatero::new(
             Vec3::new(3.0, 1.0, -2.0),
             Vec3::new(2.0, 0.0, 0.0),
             Vec3::new(0.0, 2.0, 0.0),
             luz,
-        )));
+        ))));
 
         mundo
     });
 
     Camara::new(
         Arc::new(Output::new(1.0, 400)),
-        mundo,
+       Objeto::Lista(mundo),
         20.0,
         Vec3::new(26.0, 3.0, 6.0),
         Vec3::new(0.0, 2.0, 0.0),
@@ -54,7 +52,7 @@ pub fn escena_luz_1() -> Camara {
         10.0,
         NEGRO,
         50,
-        100
+        100,
     )
 }
 
@@ -64,39 +62,39 @@ pub fn escena_luz_2() -> Camara {
             4.0,
         ))));
 
-        mundo.push(Box::new(Esfera::new_estatica(
+        mundo.push(Box::new(Objeto::Esfera(Esfera::new_estatica(
             Vec3::new(0.0, 2.0, 0.0),
             2.0,
             Arc::clone(&perlin) as Arc<dyn Material>,
-        )));
+        ))));
 
-        mundo.push(Box::new(Esfera::new_estatica(
+        mundo.push(Box::new(Objeto::Esfera(Esfera::new_estatica(
             Vec3::new(0.0, -1000.0, 0.0),
             1000.0,
             Arc::clone(&perlin) as Arc<dyn Material>,
-        )));
+        ))));
 
         let luz = Arc::new(LuzDifusa::new_from_color(Vec3::new(4.0, 4.0, 4.0)));
 
-        mundo.push(Box::new(Cuadrilatero::new(
+        mundo.push(Box::new(Objeto::Cuadrilatero(Cuadrilatero::new(
             Vec3::new(3.0, 1.0, -2.0),
             Vec3::new(2.0, 0.0, 0.0),
             Vec3::new(0.0, 2.0, 0.0),
             Arc::clone(&luz) as Arc<dyn Material>,
-        )));
+        ))));
 
-        mundo.push(Box::new(Esfera::new_estatica(
+        mundo.push(Box::new(Objeto::Esfera(Esfera::new_estatica(
             Vec3::new(0.0, 7.0, 0.0),
             2.0,
             Arc::clone(&luz) as Arc<dyn Material>,
-        )));
+        ))));
 
         mundo
     });
 
     Camara::new(
         Arc::new(Output::new(1.0, 400)),
-        mundo,
+        Objeto::Lista(mundo),
         20.0,
         Vec3::new(26.0, 3.0, 6.0),
         Vec3::new(0.0, 2.0, 0.0),
@@ -105,6 +103,6 @@ pub fn escena_luz_2() -> Camara {
         10.0,
         NEGRO,
         50,
-        100
+        100,
     )
 }

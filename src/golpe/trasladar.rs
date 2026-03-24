@@ -3,19 +3,19 @@ use std::sync::Arc;
 
 use crate::{
     caja::Caja,
-    golpe::{golpeable::Golpeable},
+    golpe::{golpeable::Golpeable, objeto::Objeto},
     rayo::Rayo,
     vec3::Vec3,
 };
 
 pub struct Trasladar {
-    objeto: Arc<dyn Golpeable>,
+    objeto: Box<Objeto>, // arc es necesario?
     desplazo: Vec3,
     caja: Caja,
 }
 
 impl Trasladar {
-    pub fn new(objeto: Arc<dyn Golpeable>, desplazo: Vec3) -> Self {
+    pub fn new(objeto: Box<Objeto>, desplazo: Vec3) -> Self {
         let caja = objeto.caja() + desplazo;
 
         Trasladar {

@@ -3,24 +3,20 @@ use std::sync::Arc;
 
 use crate::{
     caja::{self, Caja, Eje},
-    golpe::{Golpe, golpeable::Golpeable, lista_golpeable::ListaGolpeable},
+    golpe::{Golpe, golpeable::Golpeable, objeto::Objeto},
     intervalo::Intervalo,
     rayo::Rayo,
 };
 
 pub struct Nodo {
-    izquierda: Box<dyn Golpeable>,
-    derecha: Option<Box<dyn Golpeable>>,
+    izquierda: Box<Objeto>,
+    derecha: Option<Box<Objeto>>,
     caja: Caja,
 }
 
 impl Nodo {
-    pub fn new_from_lista(mut objetos: Vec<Box<dyn Golpeable>>) -> Self {
-        let len = objetos.len();
-        Nodo::new(&mut objetos /* , 0, len*/)
-    }
 
-    pub fn new(objetos: &mut Vec<Box<dyn Golpeable>> /*, inicio: usize, fin: usize*/) -> Self {
+    pub fn new(objetos: &mut Vec<Box<Objeto>>) -> Self {
         let mut caja_total = Caja::vacio();
 
         for o in objetos.iter() {
@@ -37,8 +33,8 @@ impl Nodo {
 
         let tamanno = objetos.len();
 
-        let izquierda: Box<dyn Golpeable>;
-        let derecha: Option<Box<dyn Golpeable>>;
+        let izquierda: Box<Objeto>;
+        let derecha: Option<Box<Objeto>>;
         let caja: Caja;
 
         match tamanno {
@@ -62,8 +58,8 @@ impl Nodo {
 
                 let mut derecha_vec = objetos.split_off(mid);
 
-                izquierda = Box::new(Nodo::new(objetos));
-                derecha = Some(Box::new(Nodo::new(&mut derecha_vec)));
+                izquierda = Box::new(Objeto::Nodo(Nodo::new(objetos)));
+                derecha = Some(Box::new(Objeto::Nodo(Nodo::new(&mut derecha_vec))));
                 caja = Caja::new_from_cajas(izquierda.caja(), derecha.as_ref().unwrap().caja());
             }
         }
@@ -75,7 +71,7 @@ impl Nodo {
         }
     }
 
-    pub fn comparar_caja_x(a: &Box<dyn Golpeable>, b: &Box<dyn Golpeable>) -> Ordering {
+    pub fn comparar_caja_x(a: &Box<Objeto>, b: &Box<Objeto>) -> Ordering {
         a.caja()
             .x
             .minimo
@@ -83,7 +79,7 @@ impl Nodo {
             .unwrap_or(Ordering::Equal)
     }
 
-    pub fn comparar_caja_y(a: &Box<dyn Golpeable>, b: &Box<dyn Golpeable>) -> Ordering {
+    pub fn comparar_caja_y(a: &Box<Objeto>, b: &Box<Objeto>) -> Ordering {
         a.caja()
             .y
             .minimo
@@ -91,7 +87,7 @@ impl Nodo {
             .unwrap_or(Ordering::Equal)
     }
 
-    pub fn comparar_caja_z(a: &Box<dyn Golpeable>, b: &Box<dyn Golpeable>) -> Ordering {
+    pub fn comparar_caja_z(a: &Box<Objeto>, b: &Box<Objeto>) -> Ordering {
         a.caja()
             .z
             .minimo

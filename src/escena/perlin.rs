@@ -4,7 +4,7 @@ use crate::{
     camara::Camara,
     color::CIELO,
     escena::new_escena_mundo,
-    golpe::esfera::Esfera,
+    golpe::{esfera::Esfera, objeto::Objeto},
     material::{Material, difuso_lambertiano::DifusoLambertiano},
     output::Output,
     textura::perlin::Perlin,
@@ -17,24 +17,24 @@ pub fn escena_perlin() -> Camara {
             4.0,
         ))));
 
-        mundo.push(Box::new(Esfera::new_estatica(
+        mundo.push(Box::new(Objeto::Esfera(Esfera::new_estatica(
             Vec3::new(0.0, -1000.0, 0.0),
             1000.0,
             Arc::clone(&perlin) as Arc<dyn Material>,
-        )));
+        ))));
 
-        mundo.push(Box::new(Esfera::new_estatica(
+        mundo.push(Box::new(Objeto::Esfera(Esfera::new_estatica(
             Vec3::new(0.0, 2.0, 0.0),
             2.0,
             Arc::clone(&perlin) as Arc<dyn Material>,
-        )));
+        ))));
 
         mundo
     });
 
     Camara::new(
         Arc::new(Output::new(16.0 / 9.0, 400)),
-        mundo,
+        Objeto::Lista(mundo),
         20.0,
         Vec3::new(13.0, 2.0, 3.0),
         Vec3::new(0.0, 0.0, 0.0),
@@ -43,6 +43,6 @@ pub fn escena_perlin() -> Camara {
         10.0,
         CIELO,
         50,
-        100
+        100,
     )
 }

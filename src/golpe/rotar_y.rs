@@ -1,16 +1,16 @@
 use std::sync::Arc;
 
-use crate::{caja::Caja, golpe::golpeable::Golpeable, util::grados_a_radianes, vec3::Vec3};
+use crate::{caja::Caja, golpe::{golpeable::Golpeable, objeto::Objeto}, util::grados_a_radianes, vec3::Vec3};
 
 pub struct RotarY {
-    objeto: Arc<dyn Golpeable>,
+    objeto: Box<Objeto>,
     caja: Caja,
     angulo_seno: f64,
     angulo_coseno: f64,
 }
 
 impl RotarY {
-    pub fn new(objeto: Arc<dyn Golpeable>, angulo: f64) -> Self {
+    pub fn new(objeto: Box<Objeto>, angulo: f64) -> Self {
         let radianes = grados_a_radianes(angulo);
 
         let angulo_seno = radianes.sin();

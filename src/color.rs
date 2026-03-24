@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use crate::{golpe::golpeable::Golpeable, intervalo::Intervalo, rayo::Rayo, vec3::Vec3};
+use crate::{golpe::{golpeable::Golpeable, objeto::Objeto}, intervalo::Intervalo, rayo::Rayo, vec3::Vec3};
 
 pub type Color = Vec3;
 
@@ -48,7 +48,7 @@ fn to_byte(v: f64) -> u8 {
     (256.0 * INTENSIDAD.limitar(v)) as u8
 }
 
-pub fn color_rayo<T: Golpeable>(rayo: &Rayo, mundo: &T, profundidad: i32, fondo: Color) -> Color {
+pub fn color_rayo(rayo: &Rayo, mundo: &Objeto, profundidad: i32, fondo: Color) -> Color {
     if profundidad <= 0 {
         return NEGRO;
     }

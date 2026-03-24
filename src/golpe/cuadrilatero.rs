@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::{
     caja::Caja,
-    golpe::{Golpe, golpeable::Golpeable, lista_golpeable::ListaGolpeable},
+    golpe::{Golpe, golpeable::Golpeable, lista_golpeable::ListaGolpeable, objeto::Objeto},
     intervalo::Intervalo,
     material::Material,
     vec3::{Point3, Vec3},
@@ -68,7 +68,6 @@ impl Cuadrilatero {
 
     #[inline]
     pub fn new_cubo(a: Vec3, b: Vec3, material: Arc<dyn Material>) -> ListaGolpeable {
-
         let mut cubo = ListaGolpeable::new();
 
         let min = Vec3::new(a.x().min(b.x()), a.y().min(b.y()), a.z().min(b.z()));
@@ -78,46 +77,46 @@ impl Cuadrilatero {
         let dy = Vec3::new(0.0, max.y() - min.y(), 0.0);
         let dz = Vec3::new(0.0, 0.0, max.z() - min.z());
 
-        cubo.push(Box::new(Cuadrilatero::new(
+        cubo.push(Box::new(Objeto::Cuadrilatero(Cuadrilatero::new(
             Vec3::new(min.x(), min.y(), max.z()),
             dx,
             dy,
             Arc::clone(&material),
-        ))); // frente
+        )))); // frente
 
-        cubo.push(Box::new(Cuadrilatero::new(
+        cubo.push(Box::new(Objeto::Cuadrilatero(Cuadrilatero::new(
             Vec3::new(max.x(), min.y(), max.z()),
             -dz,
             dy,
             Arc::clone(&material),
-        ))); // derecha
-        cubo.push(Box::new(Cuadrilatero::new(
+        )))); // derecha
+
+        cubo.push(Box::new(Objeto::Cuadrilatero(Cuadrilatero::new(
             Vec3::new(max.x(), min.y(), min.z()),
             -dx,
             dy,
             Arc::clone(&material),
-        ))); // atrás
-        cubo.push(Box::new(Cuadrilatero::new(
+        )))); // atrás
+        cubo.push(Box::new(Objeto::Cuadrilatero(Cuadrilatero::new(
             Vec3::new(min.x(), min.y(), min.z()),
             dz,
             dy,
             Arc::clone(&material),
-        ))); // izquierda
-        cubo.push(Box::new(Cuadrilatero::new(
+        )))); // izquierda
+        cubo.push(Box::new(Objeto::Cuadrilatero(Cuadrilatero::new(
             Vec3::new(min.x(), max.y(), max.z()),
             dx,
             -dz,
             Arc::clone(&material),
-        ))); // arriba
-        cubo.push(Box::new(Cuadrilatero::new(
+        )))); // arriba
+        cubo.push(Box::new(Objeto::Cuadrilatero(Cuadrilatero::new(
             Vec3::new(min.x(), min.y(), min.z()),
             dx,
             dz,
             Arc::clone(&material),
-        ))); // abajo
+        )))); // abajo
 
         cubo
-        
     }
 }
 

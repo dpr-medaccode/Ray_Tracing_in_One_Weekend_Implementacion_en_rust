@@ -35,6 +35,8 @@ impl Golpeable for Objeto {
     }
 }
 
+    es necesraio en golpeable cauquier Box
+
     Perfecto, ahora se entiende por qué usas Arc 👍
 pero te voy a decir algo importante y contraintuitivo:
 

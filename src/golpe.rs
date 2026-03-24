@@ -14,6 +14,7 @@ pub mod nodo;
 pub mod trasladar;
 pub mod rotar_y;
 pub mod constante_media;
+pub mod objeto;
 
 pub struct Golpe {
     lugar: Point3,
