@@ -5,7 +5,6 @@ use std::{
     time::Instant,
 };
 
-
 use rand::Rng;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
@@ -23,7 +22,6 @@ const MUESTRA_POR_PIXEL: i32 = 100; // anti-aliasing
 const ESCALA_PIXEL_MUESTRA: f64 = 1.0 / MUESTRA_POR_PIXEL as f64; */
 
 pub struct Camara {
-
     output: Arc<Output>,
     mundo: Objeto,
 
@@ -43,7 +41,7 @@ pub struct Camara {
 
     profundidad: i32,
     muestra_por_pixel: i32,
-    escala_pixel_muestra: f64
+    escala_pixel_muestra: f64,
 }
 
 impl Camara {
@@ -58,7 +56,7 @@ impl Camara {
         distancia_foco: f64,
         fondo: Color,
         profundidad: i32,
-        muestra_por_pixel:i32
+        muestra_por_pixel: i32,
     ) -> Self {
         // Convertir FOV a radianes
         let theta = fov_vertical.to_radians();
@@ -94,7 +92,7 @@ impl Camara {
         let disco_desenfoque_u = derecha_u * radio_desenfoque;
         let disco_desenfoque_v = arriba_v * radio_desenfoque;
 
-        let escala_pixel_muestra =  1.0 / muestra_por_pixel as f64;
+        let escala_pixel_muestra = 1.0 / muestra_por_pixel as f64;
 
         Self {
             output: imagen,
@@ -109,8 +107,7 @@ impl Camara {
             fondo,
             profundidad,
             muestra_por_pixel,
-            escala_pixel_muestra
-        
+            escala_pixel_muestra,
         }
     }
 
@@ -149,68 +146,49 @@ impl Camara {
     }
 
     pub fn render<W: Write>(&self, writer: &mut W, mostrar_lineas: bool, medir_tiempo: bool) {
-
-        let numero_de_hilos: u32 = num_cpus::get() as u32;
-
+     
         let alto = self.output.alto();
         let ancho = self.output.ancho();
         let inicio_total = Instant::now();
-        let tamanno_chunk = alto / numero_de_hilos;
 
         writer
             .write_all(self.output.encabezado_imagen().as_bytes())
             .unwrap();
 
-        (0..numero_de_hilos).into_par_iter().for_each(|id_bloque| {
-            let inicio = id_bloque * tamanno_chunk;
-
-            let fin = if id_bloque == numero_de_hilos - 1 {
-                alto
-            } else {
-                (id_bloque + 1) * tamanno_chunk
-            };
-
-            let nombre_archivo = format!("bloque_{}.temp", id_bloque);
+        (0..alto).into_par_iter().for_each(|j| {
+            
+            let nombre_archivo = format!("fila_{}.temp", j);
             let archivo = File::create(&nombre_archivo).unwrap();
             let mut writer_bloque = BufWriter::new(archivo);
 
-            for j in inicio..fin {
-                if mostrar_lineas {
-                    eprintln!("Bloque {} - Líneas restantes: {}", id_bloque, fin - j);
+            if mostrar_lineas {
+                eprintln!("Líneas restantes: {}", alto - j);
+            }
+
+            for i in 0..ancho {
+                let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
+                for _ in 0..self.muestra_por_pixel {
+                    let rayo = self.rayo_por_pixel(i, j);
+                    pixel_color = pixel_color
+                        + color_rayo(&rayo, &self.mundo, self.profundidad, self.fondo);
                 }
-
-                for i in 0..ancho {
-                    let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
-
-                    for _ in 0..self.muestra_por_pixel {
-                        let rayo = self.rayo_por_pixel(i, j);
-                        pixel_color =
-                            pixel_color + color_rayo(&rayo, &self.mundo, self.profundidad, self.fondo);
-                    }
-
-                    pixel_color = pixel_color * self.escala_pixel_muestra;
-                    writer_bloque
-                        .write_all(escribir_color(&pixel_color).as_bytes())
-                        .unwrap();
-                }
+                pixel_color = pixel_color * self.escala_pixel_muestra;
+                writer_bloque
+                    .write_all(escribir_color(&pixel_color).as_bytes())
+                    .unwrap();
             }
 
             if mostrar_lineas {
-                eprintln!("Bloque {} terminado", id_bloque);
+                eprintln!("Fila {} terminada", j);
             }
         });
 
-        for id_bloque in 0..numero_de_hilos {
-            let nombre_archivo = format!("bloque_{}.temp", id_bloque);
-
+        for j in 0..alto {
+            let nombre_archivo = format!("fila_{}.temp", j);
             let mut archivo_bloque = File::open(&nombre_archivo).unwrap();
-
             let mut buffer = Vec::new();
-
             archivo_bloque.read_to_end(&mut buffer).unwrap();
-
             writer.write_all(&buffer).unwrap();
-
             std::fs::remove_file(&nombre_archivo).unwrap();
         }
 
