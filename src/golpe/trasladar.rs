@@ -1,6 +1,4 @@
 #![allow(dead_code)]
-use std::sync::Arc;
-
 use crate::{
     caja::Caja,
     golpe::{golpeable::Golpeable, objeto::Objeto},

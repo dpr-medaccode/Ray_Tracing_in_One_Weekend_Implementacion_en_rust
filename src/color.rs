@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 use crate::{golpe::{golpeable::Golpeable, objeto::Objeto}, intervalo::Intervalo, rayo::Rayo, vec3::Vec3};
+use std::io::Write;
+
 
 pub type Color = Vec3;
 
@@ -34,6 +36,18 @@ pub fn escribir_color(pixel_color: &Color) -> String {
         to_byte(linear_a_gamma(pixel_color.y())),
         to_byte(linear_a_gamma(pixel_color.z()))
     )
+}
+
+pub fn escribir_color_bytes(pixel_color: &Color) -> Vec<u8> {
+    let r = to_byte(linear_a_gamma(pixel_color.x()));
+    let g = to_byte(linear_a_gamma(pixel_color.y()));
+    let b = to_byte(linear_a_gamma(pixel_color.z()));
+
+    let mut out = Vec::with_capacity(12);
+
+    write!(&mut out, "{} {} {}\n", r, g, b).unwrap();
+
+    out
 }
 
 fn linear_a_gamma(elemento_linear: f64) -> f64 {

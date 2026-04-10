@@ -1,7 +1,9 @@
 use std::{
-    fs::File,
-    io::{BufWriter, Read, Write},
-    sync::Arc,
+    io::Write,
+    sync::{
+        Arc,
+        atomic::{AtomicUsize, Ordering},
+    },
     time::Instant,
 };
 
@@ -9,8 +11,8 @@ use rand::Rng;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::{
-    color::{Color, color_rayo, escribir_color},
-    golpe::{lista_golpeable::ListaGolpeable, objeto::Objeto},
+    color::{Color, color_rayo, escribir_color_bytes},
+    golpe::objeto::Objeto,
     output::Output,
     rayo::Rayo,
     vec3::Vec3,
@@ -32,7 +34,6 @@ pub struct Camara {
 
     pixel_00_lugar: Vec3,
 
-    //fov_vertical: f64,
     disco_desenfoque_u: Vec3,
     disco_desenfoque_v: Vec3,
 
@@ -146,7 +147,6 @@ impl Camara {
     }
 
     pub fn render<W: Write>(&self, writer: &mut W, mostrar_lineas: bool, medir_tiempo: bool) {
-     
         let alto = self.output.alto();
         let ancho = self.output.ancho();
         let inicio_total = Instant::now();
@@ -155,41 +155,42 @@ impl Camara {
             .write_all(self.output.encabezado_imagen().as_bytes())
             .unwrap();
 
-        (0..alto).into_par_iter().for_each(|j| {
-            
-            let nombre_archivo = format!("fila_{}.temp", j);
-            let archivo = File::create(&nombre_archivo).unwrap();
-            let mut writer_bloque = BufWriter::new(archivo);
+        let completadas = AtomicUsize::new(0);
 
-            if mostrar_lineas {
-                eprintln!("Líneas restantes: {}", alto - j);
-            }
+        let filas: Vec<Vec<u8>> = (0..alto)
+            .into_par_iter()
+            .map(|j| {
+                let mut buffer: Vec<u8> = Vec::new();
 
-            for i in 0..ancho {
-                let mut pixel_color = Vec3::new(0.0, 0.0, 0.0);
-                for _ in 0..self.muestra_por_pixel {
-                    let rayo = self.rayo_por_pixel(i, j);
-                    pixel_color = pixel_color
-                        + color_rayo(&rayo, &self.mundo, self.profundidad, self.fondo);
+                for i in 0..ancho {
+                    let pixel_color = (0..self.muestra_por_pixel)
+                        .map(|_| {
+                            let rayo = self.rayo_por_pixel(i, j);
+
+                            color_rayo(&rayo, &self.mundo, self.profundidad, self.fondo)
+                        })
+                        .fold(Vec3::new(0.0, 0.0, 0.0), |acc, c| acc + c)
+                        * self.escala_pixel_muestra;
+
+                    buffer.extend_from_slice(&escribir_color_bytes(&pixel_color));
                 }
-                pixel_color = pixel_color * self.escala_pixel_muestra;
-                writer_bloque
-                    .write_all(escribir_color(&pixel_color).as_bytes())
-                    .unwrap();
-            }
 
-            if mostrar_lineas {
-                eprintln!("Fila {} terminada", j);
-            }
-        });
+                if mostrar_lineas {
+                    //eprintln!("Fila {j} terminada, Lineas restantes: {}", alto - j);
 
-        for j in 0..alto {
-            let nombre_archivo = format!("fila_{}.temp", j);
-            let mut archivo_bloque = File::open(&nombre_archivo).unwrap();
-            let mut buffer = Vec::new();
-            archivo_bloque.read_to_end(&mut buffer).unwrap();
-            writer.write_all(&buffer).unwrap();
-            std::fs::remove_file(&nombre_archivo).unwrap();
+                    let done = completadas.fetch_add(1, Ordering::Relaxed) + 1;
+
+                    if done % 10 == 0 {
+                        eprintln!("Lineas: {}/{}", done, alto);
+                    }
+                }
+
+                buffer
+            })
+            .collect();
+
+        for fila in filas {
+            writer.write_all(&fila).unwrap();
         }
 
         if medir_tiempo {

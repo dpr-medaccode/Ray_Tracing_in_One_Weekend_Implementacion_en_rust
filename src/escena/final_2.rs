@@ -6,7 +6,7 @@ use crate::{
     escena::new_escena_mundo,
     golpe::{
         constante_media::ConstanteMedia, cuadrilatero::Cuadrilatero, esfera::Esfera,
-        golpeable::Golpeable, lista_golpeable::ListaGolpeable, nodo::Nodo, objeto::Objeto,
+        lista_golpeable::ListaGolpeable, nodo::Nodo, objeto::Objeto,
         rotar_y::RotarY, trasladar::Trasladar,
     },
     material::{

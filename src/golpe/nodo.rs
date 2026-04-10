@@ -1,8 +1,7 @@
 use std::cmp::Ordering;
-use std::sync::Arc;
 
 use crate::{
-    caja::{self, Caja, Eje},
+    caja::{Caja, Eje},
     golpe::{Golpe, golpeable::Golpeable, objeto::Objeto},
     intervalo::Intervalo,
     rayo::Rayo,

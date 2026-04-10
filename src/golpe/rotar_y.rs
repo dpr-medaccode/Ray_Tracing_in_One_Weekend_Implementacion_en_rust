@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use crate::{caja::Caja, golpe::{golpeable::Golpeable, objeto::Objeto}, util::grados_a_radianes, vec3::Vec3};
 
 pub struct RotarY {
